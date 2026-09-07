@@ -32,6 +32,7 @@ func(srv *Server) setupRoutes(){
 		// setup for the login and the registration
 		r.Post("/register", srv.HandleRegister)
 		r.Post("/login", srv.HandleLogin)
+		r.Get("/refreshToken", srv.HandleNewAccessToken)
 
 
 		// create the protected handlers

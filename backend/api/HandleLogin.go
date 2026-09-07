@@ -37,8 +37,8 @@ func (srv *Server) HandleLogin(w http.ResponseWriter, r *http.Request){
 	// check loginCredentials from database
 	
 	// if the user doesn't exists
-	checkUserExistence, id := database.UserExistence(LoginData.Email, srv.Db)
-	if checkUserExistence == false{
+	id := database.LoginData(LoginData, srv.Db)
+	if id != -1{
 		response := models.Response{
 			Success: false,
 			Message: "User doesnot exists",
@@ -77,5 +77,4 @@ func (srv *Server) HandleLogin(w http.ResponseWriter, r *http.Request){
 	w.WriteHeader(http.StatusAccepted)
 	json.NewEncoder(w).Encode(response)
 
-	return
 }
