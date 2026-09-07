@@ -2,7 +2,9 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+
 	"github.com/image-generator/internal/models"
 	"github.com/image-generator/utils"
 )
@@ -16,15 +18,18 @@ func(srv Server) HandleNewAccessToken(w http.ResponseWriter, r *http.Request){
 	var token refreshToken
 	json.NewDecoder(r.Body).Decode(&token)
 
+	fmt.Println("Refresh Token is: ", token.RefreshToken)
+
 	if token.RefreshToken == ""{
 		response := models.Response{
 			Success: false,
 			Message: "Can't get the token.",
-			Data: "Attach refreshToken as Bearer <token_string>",
+			Data: "Attach refreshToken as refreshToken: tokenstring",
 		}
 
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(&response)
+		return
 	}
 
 	// else first validate the token string
@@ -33,11 +38,12 @@ func(srv Server) HandleNewAccessToken(w http.ResponseWriter, r *http.Request){
 		response := models.Response{
 			Success: false,
 			Message: "Wrong token.",
-			Data: "Attach correct token as Bearer <token_string>",
+			Data: "Attach correct token as refreshToken: <token_string>",
 		}
 
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(&response)
+		return
 	}
 
 	// respond with the new access token

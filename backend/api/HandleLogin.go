@@ -17,6 +17,7 @@ type tokenResponse struct{
 func (srv *Server) HandleLogin(w http.ResponseWriter, r *http.Request){
 	var LoginData models.Login
 	json.NewDecoder(r.Body).Decode(&LoginData)
+	fmt.Println("[LOGIN HANDLER]: Login Data", LoginData)
 
 
 	// now validate all of the given data and add to the database
@@ -38,7 +39,7 @@ func (srv *Server) HandleLogin(w http.ResponseWriter, r *http.Request){
 	
 	// if the user doesn't exists
 	id := database.LoginData(LoginData, srv.Db)
-	if id != -1{
+	if id == -1{
 		response := models.Response{
 			Success: false,
 			Message: "User doesnot exists",
@@ -52,6 +53,7 @@ func (srv *Server) HandleLogin(w http.ResponseWriter, r *http.Request){
 	// provide the user the access-token and refresh-token
 	accessToken,refreshToken, err := utils.GenerateTokens(int64(id), LoginData.Email, "both")
 
+	fmt.Println("[LOGIN HANDLER]: Accesstoken and refresh token: ", refreshToken, accessToken)
 
 	if err != nil{
 		fmt.Println("[LOGIN HANDLER] ", err)

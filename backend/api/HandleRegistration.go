@@ -45,7 +45,17 @@ func (srv *Server) HandleRegister(w http.ResponseWriter, r *http.Request){
 	}
 
 	// add the user to the database
-
+	id, err = database.RegisterUser(registerData, srv.Db)
+	if err != nil{
+		response := models.Response{
+			Success: false,
+			Message: err.Error(),
+		}
+		w.Header().Set("Content-Type", "application/json")
+    	w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
 
 	// provide the user the access-token and refresh-token
 	accessToken,refreshToken, err := utils.GenerateTokens(int64(id), registerData.Email, "both")
@@ -64,7 +74,7 @@ func (srv *Server) HandleRegister(w http.ResponseWriter, r *http.Request){
 	}
 
 	// add the users to the database
-	
+
 
 
 	response := models.Response{

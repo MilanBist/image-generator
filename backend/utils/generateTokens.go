@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"time"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/joho/godotenv"
 )
 
 
@@ -24,7 +23,7 @@ func generateClaims(email, typeof string, timing int, userId int64) Claims{
 		Type: typeof,
 		RegisteredClaims: jwt.RegisteredClaims{
 				Subject: strconv.FormatInt(userId, 10),
-				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(timing))),
+				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(timing)*time.Minute)),
 				IssuedAt: jwt.NewNumericDate(time.Now()),
 			},
 	}
@@ -32,14 +31,14 @@ func generateClaims(email, typeof string, timing int, userId int64) Claims{
 }
 
 func GenerateTokens(userId int64, email, requirement string)(string,string,error){
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Println(err)
-		return "", "", err
-	}
+
 
 	accessSecretKey := []byte(os.Getenv("SECRET_KEY_ACCESS"))
 	refreshSecretKey := []byte(os.Getenv("SECRET_KEY_REFRESH"))
+
+	if string(accessSecretKey) == "" || string(refreshSecretKey) == "" {
+    	return "", "", errors.New("JWT secret keys are not configured")
+	}
 
 
 	// return on the basis of the rquirement.

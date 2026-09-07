@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
 	"github.com/image-generator/api"
 	"github.com/image-generator/config"
 	"github.com/image-generator/database"
@@ -26,7 +25,7 @@ func main(){
 
 	port := ":"+cfg.BackendPort
 
-	fmt.Println("Server successfully started! Listening on http://localhost:8080...")
+	fmt.Println("Server successfully started! Listening on http://localhost:8081...")
 	if err = http.ListenAndServe(port, server.Router); err != nil{
 		log.Fatal("Can't start the http server, Error: ",err)
 	}

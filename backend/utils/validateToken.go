@@ -20,6 +20,7 @@ func validateJwt(tokenString string, key []byte) (*jwt.Token, error) {
     })
 
     if err != nil {
+		fmt.Println(err)
         fmt.Println("[VALIDATION ERROR]:", err)
         return nil, err
     }
@@ -27,6 +28,8 @@ func validateJwt(tokenString string, key []byte) (*jwt.Token, error) {
     if !jwtToken.Valid {
         return nil, errors.New("invalid token")
     }
+
+	fmt.Println("VALIDATION PLACE: Jwt token: ", jwtToken)
     return jwtToken, nil
 }
 

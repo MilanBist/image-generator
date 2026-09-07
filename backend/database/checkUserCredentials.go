@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/image-generator/internal/models"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -35,21 +36,31 @@ func UserExistence(email string, db *pgxpool.Pool) (bool, int){
 func LoginData(loginCredentials models.Login, db *pgxpool.Pool) (int){
 	ctx := context.Background()
 	query := `
-			SELECT "id" FROM "users"
+			SELECT "passwordHash", "id" FROM "users"
 			WHERE "email" = $1
-			returning "hashedPassword", "id"
 		`
 	var password string
 	var id int
 
-	db.QueryRow(ctx, query, loginCredentials.Email).Scan(&password, &id)
+	fmt.Println("Id and password are: ", password)
+
+	err1 := db.QueryRow(ctx, query, loginCredentials.Email).Scan(&password, &id)
+	if err1 != nil{
+		fmt.Println("Error is: ", err1)
+		return -1
+	}
+
 	if id == -1 || password == ""{
 		return  id
 	}
 	isSame := checkPasswordHash(loginCredentials.Password, password)
+	fmt.Println("Is same: ", isSame)
 
+	fmt.Println("Correct from loginData.")
 	if isSame == true{
 		return id
 	}
+	fmt.Println("Reaching here.")
+	
 	return -1
 }

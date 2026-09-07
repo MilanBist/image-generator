@@ -27,15 +27,15 @@ func RegisterUser(credentials models.Register, db *pgxpool.Pool) (int, error){
 	credentials.Password = hashedPassword
 
 	// NOW ADD THIS TO THE DATABASe using the pgx
-	query := `INSERT INTO "users"("userName", "email", "hashedPassword")
+	query := `INSERT INTO "users"("userName", "email", "passwordHash")
 			 VALUES ($1, $2, $3)
 			 RETURNING "id"
 			 `
-	var id int
 
+
+	var id int
 	err = db.QueryRow(ctx, query, credentials.Username, credentials.Email, credentials.Password).Scan(&id)
 	if err != nil{
-		// show the user that there is error
 		return -1, err
 	}
 
