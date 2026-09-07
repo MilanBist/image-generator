@@ -40,7 +40,7 @@ func(srv *Server) setupRoutes(){
 			// add the middlewares here
 			r.Use(middlewares.LoggingMiddleware)
 			r.Use(middlewares.AuthenticationMiddleware)
-
+			
 			// after making these handlers protected now use certain things here
 
 

@@ -66,3 +66,37 @@ When finished:
 docker compose down
 ```
 
+
+## Database Setup
+
+PostgreSQL is configured using Docker Compose, and Goose is used for database migrations.
+
+```yaml
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: pixelforge
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+```
+
+Start the database:
+
+```bash
+docker compose up -d
+```
+
+Run migrations:
+
+```bash
+goose -dir db/migrations postgres "$DATABASE_URL" up
+```
+
