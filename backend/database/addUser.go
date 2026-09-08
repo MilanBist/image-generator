@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"github.com/image-generator/internal/models"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -16,7 +15,7 @@ func hashPassword(password string) (string, error){
 	return string(bytes), err
 }
 
-func RegisterUser(credentials models.Register, db *pgxpool.Pool) (int, error){
+func(p *PostgresData) RegisterUser(credentials models.Register) (int, error){
 	ctx := context.Background()
 
 	hashedPassword, err := hashPassword(credentials.Password)
@@ -34,7 +33,7 @@ func RegisterUser(credentials models.Register, db *pgxpool.Pool) (int, error){
 
 
 	var id int
-	err = db.QueryRow(ctx, query, credentials.Username, credentials.Email, credentials.Password).Scan(&id)
+	err = p.Db.QueryRow(ctx, query, credentials.Username, credentials.Email, credentials.Password).Scan(&id)
 	if err != nil{
 		return -1, err
 	}

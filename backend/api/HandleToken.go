@@ -9,11 +9,17 @@ import (
 	"github.com/image-generator/utils"
 )
 
+
+type Refresh struct{
+	Token TokenService
+}
 type refreshToken struct{
 	RefreshToken string		`json:"refreshToken"`
 }
 
-func(srv Server) HandleNewAccessToken(w http.ResponseWriter, r *http.Request){
+
+
+func(tkn Refresh) HandleNewAccessToken(w http.ResponseWriter, r *http.Request){
 	// get a new access token based on certain string
 	var token refreshToken
 	json.NewDecoder(r.Body).Decode(&token)
@@ -47,7 +53,7 @@ func(srv Server) HandleNewAccessToken(w http.ResponseWriter, r *http.Request){
 	}
 
 	// respond with the new access token
-	_, accessToken, err := utils.GenerateTokens(int64(userId), email, "access")
+	_, accessToken, err := tkn.Token.GenerateTokens(int64(userId), email, "access")
 	if err != nil{
 		response := models.Response{
 			Success: false,

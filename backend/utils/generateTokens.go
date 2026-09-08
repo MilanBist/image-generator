@@ -3,12 +3,15 @@ package utils
 import (
 	"errors"
 	"fmt"
-	"os"
 	"strconv"
 	"time"
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type JwtService struct{
+	AccessTokenSecret		string
+	RefreshTokenSecret		string
+}
 
 type Claims struct {
 	Email string `json:"email"`
@@ -30,11 +33,11 @@ func generateClaims(email, typeof string, timing int, userId int64) Claims{
 	return claims
 }
 
-func GenerateTokens(userId int64, email, requirement string)(string,string,error){
+func(j *JwtService) GenerateTokens(userId int64, email, requirement string)(string,string,error){
 
 
-	accessSecretKey := []byte(os.Getenv("SECRET_KEY_ACCESS"))
-	refreshSecretKey := []byte(os.Getenv("SECRET_KEY_REFRESH"))
+	accessSecretKey := j.AccessTokenSecret
+	refreshSecretKey := j.RefreshTokenSecret
 
 	if string(accessSecretKey) == "" || string(refreshSecretKey) == "" {
     	return "", "", errors.New("JWT secret keys are not configured")

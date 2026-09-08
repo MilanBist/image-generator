@@ -4,13 +4,22 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"github.com/image-generator/database"
 	"github.com/image-generator/internal/models"
 	"github.com/image-generator/utils"
 )
 
-func (srv *Server) HandleRegister(w http.ResponseWriter, r *http.Request){
+type RegisterStore interface{
+	CheckPastInitialization(email string) (bool, int)
+	RegisterUser(credentials models.Register) (int, error)
+}
+
+// token service is written in login handler
+type RegisterHandler struct{
+	Store 	RegisterStore
+	Token 	TokenService
+}
+
+func (rh *RegisterHandler) HandleRegister(w http.ResponseWriter, r *http.Request){
 	var registerData models.Register
 	json.NewDecoder(r.Body).Decode(&registerData)
 
@@ -32,7 +41,7 @@ func (srv *Server) HandleRegister(w http.ResponseWriter, r *http.Request){
 
 	
 	// if the user already exists
-	checkUserExistence, id := database.UserExistence(registerData.Email, srv.Db)
+	checkUserExistence, id := rh.Store.CheckPastInitialization(registerData.Email)
 	if checkUserExistence == true{
 		response := models.Response{
 			Success: false,
@@ -45,7 +54,7 @@ func (srv *Server) HandleRegister(w http.ResponseWriter, r *http.Request){
 	}
 
 	// add the user to the database
-	id, err = database.RegisterUser(registerData, srv.Db)
+	id, err = rh.Store.RegisterUser(registerData)
 	if err != nil{
 		response := models.Response{
 			Success: false,
@@ -58,7 +67,7 @@ func (srv *Server) HandleRegister(w http.ResponseWriter, r *http.Request){
 	}
 
 	// provide the user the access-token and refresh-token
-	accessToken,refreshToken, err := utils.GenerateTokens(int64(id), registerData.Email, "both")
+	accessToken,refreshToken, err := rh.Token.GenerateTokens(int64(id), registerData.Email, "both")
 
 
 	if err != nil{

@@ -2,13 +2,15 @@ package api
 
 import (
 	"net/http"
+	"os"
 	"time"
-
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/image-generator/config"
+	"github.com/image-generator/database"
 	"github.com/image-generator/internal/middlewares"
+	"github.com/image-generator/utils"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -19,7 +21,36 @@ type Server struct{
 	Config 	*config.Config
 }
 
+
+
 func(srv *Server) setupRoutes(){
+
+	// get the login and register handler
+
+	store := &database.PostgresData{
+		Db: srv.Db,
+	}
+
+
+	jwtService := &utils.JwtService{
+		AccessTokenSecret: os.Getenv("SECRET_KEY_ACCESS"),
+		RefreshTokenSecret: os.Getenv("SECRET_KEY_REFRESH"),
+	}
+
+	l := &LoginHandler{
+		Store: store,
+		Token: jwtService,
+	}
+
+	rh := &RegisterHandler{
+		Store: store,
+		Token: jwtService,
+	}
+
+	tknService := &Refresh{
+		Token: jwtService,
+	}
+
 	srv.Router.Get("/api/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Success in getting response."))
 	})
@@ -30,9 +61,9 @@ func(srv *Server) setupRoutes(){
 		})
 
 		// setup for the login and the registration
-		r.Post("/register", srv.HandleRegister)
-		r.Post("/login", srv.HandleLogin)
-		r.Get("/refreshToken", srv.HandleNewAccessToken)
+		r.Post("/register", rh.HandleRegister)
+		r.Post("/login", l.HandleLogin)
+		r.Get("/refreshToken", tknService.HandleNewAccessToken)
 
 
 		// create the protected handlers
@@ -78,8 +109,6 @@ func NewServer(db *pgxpool.Pool, cfg *config.Config) (*Server, error){
 		Config: cfg,
 	}
 
-
 	srv.setupRoutes()
-
 	return srv,nil
 }
