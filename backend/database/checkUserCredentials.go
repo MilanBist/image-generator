@@ -46,7 +46,6 @@ func(p *PostgresData) LoginUser(loginCredentials models.Login) (int, error){
 	var password string
 	var id int
 
-	fmt.Println("Id and password are: ", password)
 
 	err1 := p.Db.QueryRow(ctx, query, loginCredentials.Email).Scan(&password, &id)
 	if err1 != nil{
@@ -57,6 +56,9 @@ func(p *PostgresData) LoginUser(loginCredentials models.Login) (int, error){
 	if id == -1 || password == ""{
 		return  id, errors.New("No password or id detected.")
 	}
+
+	fmt.Println("Password: ", loginCredentials.Password)
+	fmt.Println("Hashed passworda: ", password)
 	isSame := checkPasswordHash(loginCredentials.Password, password)
 	fmt.Println("Is same: ", isSame)
 
@@ -64,7 +66,8 @@ func(p *PostgresData) LoginUser(loginCredentials models.Login) (int, error){
 	if isSame == true{
 		return id,nil
 	}
-	fmt.Println("Reaching here.")
+
 	
+	fmt.Println("Reaching here.")
 	return -1, errors.New("No same password.")
 }

@@ -7,72 +7,71 @@ import (
 	"github.com/image-generator/internal/models"
 	"github.com/image-generator/utils"
 )
-type tokenResponse struct{
-	RefreshToken string		`json:"access"`
-	AccessToken string		`json:"refresh"`
+
+type tokenResponse struct {
+	RefreshToken string `json:"refresh"`
+	AccessToken  string `json:"access"`
 }
 
 // anything of type this must satisfy both the function interfaces.
-type UserStore interface{
+type UserStore interface {
 	LoginUser(credentials models.Login) (int, error)
 }
 
-type TokenService interface{
-	GenerateTokens(userId int64, email, requirement string) (string,string, error)
+type TokenService interface {
+	GenerateTokens(userId int64, email, requirement string) (string, string, error)
 }
 
-type LoginHandler struct{
+type LoginHandler struct {
 	Store UserStore
 	Token TokenService
 }
 
-func (l *LoginHandler) HandleLogin(w http.ResponseWriter, r *http.Request){
+func (l *LoginHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	var ld models.Login
 	json.NewDecoder(r.Body).Decode(&ld)
 	fmt.Println("[LOGIN HANDLER]: Login Data", ld)
 
-
 	// now validate all of the given data and add to the database
 	err := utils.ValidateLoginCredentials(ld)
 
-
-	if err != nil{
+	if err != nil {
 		response := models.Response{
 			Success: false,
-			Message: err.Error(),
+			Message: "lLogin credentials can't be validated.",
 		}
 		w.Header().Set("Content-Type", "application/json")
-    	w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(response)
 		return
 	}
 
 	// check loginCredentials from database
-	
+
 	// if the user doesn't exists
 	id, err := l.Store.LoginUser(ld)
-	if id == -1{
+	if id == -1 {
 		response := models.Response{
 			Success: false,
 			Message: "User doesnot exists",
 		}
 		w.Header().Set("Content-Type", "application/json")
-    	w.WriteHeader(404)
+		w.WriteHeader(404)
 		json.NewEncoder(w).Encode(response)
 		return
 	}
 
 	// provide the user the access-token and refresh-token
-	accessToken,refreshToken, err := l.Token.GenerateTokens(int64(id), ld.Email, "both")
-	fmt.Println("[LOGIN HANDLER]: Accesstoken and refresh token: ", refreshToken, accessToken)
-	if err != nil{
+	refreshToken, accessToken, err := l.Token.GenerateTokens(int64(id), ld.Email, "both")
+	fmt.Println("[LOGIN HANDLER]: Access token and refresh token: ", refreshToken, accessToken)
+	if err != nil {
 		fmt.Println("[LOGIN HANDLER] ", err)
 		response := models.Response{
 			Success: false,
 			Message: "Server error.",
 		}
 		w.Header().Set("Content-Type", "application/json")
-    	w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(response)
 		return
 	}
@@ -81,7 +80,7 @@ func (l *LoginHandler) HandleLogin(w http.ResponseWriter, r *http.Request){
 		Success: true,
 		Message: "Successfully logged in.",
 		Data: tokenResponse{
-			AccessToken: accessToken,
+			AccessToken:  accessToken,
 			RefreshToken: refreshToken,
 		},
 	}

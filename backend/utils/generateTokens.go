@@ -36,8 +36,8 @@ func generateClaims(email, typeof string, timing int, userId int64) Claims{
 func(j *JwtService) GenerateTokens(userId int64, email, requirement string)(string,string,error){
 
 
-	accessSecretKey := j.AccessTokenSecret
-	refreshSecretKey := j.RefreshTokenSecret
+	accessSecretKey := []byte(j.AccessTokenSecret)
+	refreshSecretKey := []byte(j.RefreshTokenSecret)
 
 	if string(accessSecretKey) == "" || string(refreshSecretKey) == "" {
     	return "", "", errors.New("JWT secret keys are not configured")
@@ -51,6 +51,7 @@ func(j *JwtService) GenerateTokens(userId int64, email, requirement string)(stri
 		accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessTokenClaims)
 		accessTokenString, err := accessToken.SignedString(accessSecretKey)
 		if err != nil{
+			fmt.Println("[GENERATING TOKENS]: Acutal error: ", err)
 			fmt.Println("[GENERATING TOKENS]: Error in generating the access claims")
 			return "", "", errors.New("Error in generating the claims for access token.")
 		}
@@ -72,6 +73,7 @@ func(j *JwtService) GenerateTokens(userId int64, email, requirement string)(stri
 		accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessTokenClaims)
 		accessTokenString, err := accessToken.SignedString(accessSecretKey)
 		if err != nil{
+			fmt.Println("[GENERATING TOKENS]: Acutal error: ", err)
 			fmt.Println("[GENERATING TOKENS]: Error in generating the access claims")
 			return "", "", errors.New("Error in generating the claims for access token.")
 		}
