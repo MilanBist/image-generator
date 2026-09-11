@@ -4,12 +4,14 @@ import (
 	"net/http"
 	"os"
 	"time"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/image-generator/config"
 	"github.com/image-generator/database"
 	"github.com/image-generator/internal/middlewares"
+	"github.com/image-generator/storage"
 	"github.com/image-generator/utils"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -31,10 +33,13 @@ func(srv *Server) setupRoutes(){
 		Db: srv.Db,
 	}
 
-
 	jwtService := &utils.JwtService{
 		AccessTokenSecret: os.Getenv("SECRET_KEY_ACCESS"),
 		RefreshTokenSecret: os.Getenv("SECRET_KEY_REFRESH"),
+	}
+
+	imageGenerationService := &storage.StoreFile{
+		BasePath: "../uploadFile/",
 	}
 
 	l := &LoginHandler{
@@ -49,6 +54,10 @@ func(srv *Server) setupRoutes(){
 
 	tknService := &Refresh{
 		Token: jwtService,
+	}
+
+	imgGenerator := &ImageGeneratorHandler{
+		Savator: imageGenerationService,
 	}
 
 	srv.Router.Get("/api/health", func(w http.ResponseWriter, r *http.Request) {
@@ -73,7 +82,7 @@ func(srv *Server) setupRoutes(){
 			r.Use(middlewares.AuthenticationMiddleware)
 			
 			// after making these handlers protected now use certain things here
-
+			r.Post("/getImages", imgGenerator.HandleImageGeneration)
 
 		})
 	})
