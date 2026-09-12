@@ -3,8 +3,8 @@ package api
 import (
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
-
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -39,7 +39,7 @@ func(srv *Server) setupRoutes(){
 	}
 
 	imageGenerationService := &storage.StoreFile{
-		BasePath: "../uploadFile/",
+		BasePath: filepath.Join(".", "uploadFiles"),
 	}
 
 	l := &LoginHandler{

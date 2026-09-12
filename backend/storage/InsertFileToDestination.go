@@ -7,6 +7,8 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
+
 	"github.com/image-generator/engine"
 )
 
@@ -15,9 +17,9 @@ type StoreFile struct{
 	BasePath string
 }
 
-
 // check for path existence
 func pathExistence(filePath string) (bool, error){
+	fmt.Println("Filepath: ", filePath)
 	_, err := os.Stat(filePath)
 
 	if err == nil{
@@ -31,7 +33,6 @@ func pathExistence(filePath string) (bool, error){
 
 // add file to the given location
 func addToLocation(file multipart.File, filepath string) error{
-
 	fmt.Println(filepath)
 	inputFile, err := os.Create(filepath)
 	if err != nil {
@@ -48,6 +49,7 @@ func addToLocation(file multipart.File, filepath string) error{
 		fmt.Println("Error in copying the file item. Actual error: ", err)
 		return errors.New("Error in copying the file item.")
 	}
+	fmt.Println("Successfully added the file to the location.")
 	return nil
 }
 
@@ -55,12 +57,11 @@ func addToLocation(file multipart.File, filepath string) error{
 
 // add the file to the certain location
 func (f *StoreFile) AddDataToDestination(file multipart.File, fileName string) (string, int, error){
-	fmt.Println("Base path is: ",f.BasePath)
 	folderExistence, err := pathExistence(f.BasePath)
-	fmt.Println("File existence: ", folderExistence)
-	if err == os.ErrNotExist && folderExistence == false{
+	fmt.Println("Folder existence: ", folderExistence)
+	if err == os.ErrNotExist || folderExistence == false{
 		// create the folder
-		err := os.Mkdir(f.BasePath, 0755)
+		err := os.MkdirAll(f.BasePath, 0755)
 		if err != nil{
 			fmt.Println("Error in creating the folder in destination of .", f.BasePath + fileName)
 			return "", http.StatusInternalServerError, errors.New("Error in creating file destination")
@@ -70,18 +71,18 @@ func (f *StoreFile) AddDataToDestination(file multipart.File, fileName string) (
 	}
 
 
-	err = addToLocation(file, f.BasePath+fileName)
-	fmt.Println("File creation failed.")
+	fmt.Println("File name is: ", fileName)
+	err = addToLocation(file, filepath.Join(f.BasePath, fileName))
 	if err != nil {
 		return "", http.StatusInternalServerError, errors.New("Error in creating the file.")
 	}
-	return "", http.StatusAccepted, nil
+	return filepath.Join(f.BasePath, fileName), http.StatusAccepted, nil
 }
 
 // Generate image from the raw file
 func (f *StoreFile) GenerateImage(exactFilePath string) (string,int, error){
 	//generate image from the raw file
-	allImageFiles, baseOutputPath, err := engine.GenerateImageFromRaw(exactFilePath, "../outputImages/")
+	allImageFiles, baseOutputPath, err := engine.GenerateImageFromRaw(exactFilePath, "./outputImages")
 	
 	if err != nil{
 		fmt.Println("Internal Server error: ",err)

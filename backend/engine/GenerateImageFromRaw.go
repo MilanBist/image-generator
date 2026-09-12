@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 )
 
@@ -119,10 +120,10 @@ func getImages(filename, baseOutputPath string) (error){
 						if whichFile == "png"{
 							imageFile.Close()
 						}
-						imageFilePath= baseOutputPath +"/img"+ strconv.Itoa(jpgFileCount) +".jpg"
+						imageFilePath = filepath.Join(baseOutputPath, "img"+ strconv.Itoa(jpgFileCount)+ ".jpg")
 					} else{
 						imageFile.Close()
-						imageFilePath = baseOutputPath + "/img"+ strconv.Itoa(jpgFileCount)+".jpg"
+						imageFilePath = filepath.Join(baseOutputPath, "img"+ strconv.Itoa(jpgFileCount)+ ".jpg")
 					}
 					imageFile, err = os.OpenFile(imageFilePath, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
 					if err != nil{
@@ -138,10 +139,10 @@ func getImages(filename, baseOutputPath string) (error){
 						if whichFile == "jpg"{
 							imageFile.Close()
 						}
-						imageFilePath= baseOutputPath +"/img"+ strconv.Itoa(pngFileCount) +".png"
+						imageFilePath = filepath.Join(baseOutputPath, "img"+ strconv.Itoa(pngFileCount)+ ".png")
 					} else{
 						imageFile.Close()
-						imageFilePath = baseOutputPath + "/img"+ strconv.Itoa(pngFileCount)+".png"
+						imageFilePath = filepath.Join(baseOutputPath, "img"+ strconv.Itoa(pngFileCount)+ ".png")
 					}
 					imageFile, err = os.OpenFile(imageFilePath, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
 					if err != nil{
@@ -172,9 +173,11 @@ func getImages(filename, baseOutputPath string) (error){
 
 func GenerateImageFromRaw(rawImageFilepath, baseOutputPath string) (AllFiles, string, error){
 	folderExistence, err := pathExistence(baseOutputPath)
-	if err == os.ErrNotExist && folderExistence == false{
+	fmt.Println("Base output path is: ", baseOutputPath)
+	fmt.Println(folderExistence, err)
+	if err == os.ErrNotExist || folderExistence == false{
 		// create the folder
-		err := os.Mkdir(baseOutputPath, 0755)
+		err := os.MkdirAll(baseOutputPath, 0755)
 		if err != nil{
 			fmt.Println("Error in creating the folder in destination of .", baseOutputPath)
 			return allfile,"", errors.New("Error in creating file destination")
@@ -182,6 +185,7 @@ func GenerateImageFromRaw(rawImageFilepath, baseOutputPath string) (AllFiles, st
 	}
 
 	// get the images based on the rawImage filepath
+	fmt.Println("Raw image file path is: ", rawImageFilepath)
 	err = getImages(rawImageFilepath, baseOutputPath)
 	if err != nil{
 		fmt.Println("Error in engine.: ", err)

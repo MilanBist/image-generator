@@ -35,10 +35,10 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 	filename := header.Filename
 
 	// get the userId and create the full fileName
-		// get the user_id as well from the context
+	// get the user_id as well from the context
 	data := r.Context().Value("metaData")
 	metaData := data.(models.ContextMetaData)
-	filename  = strconv.Itoa(metaData.UserId) + filename
+	filename  = "user"+strconv.Itoa(metaData.UserId) +"_"+ filename
 
 	// check for the file extension
 	if filepath.Ext(filename) != ".raw"{
@@ -69,7 +69,7 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 			Message: err.Error(),
 		}
 
-		w.WriteHeader(statusCode)
+		w.WriteHeader(500)
 		json.NewEncoder(w).Encode(response)
 		return	
 	}
