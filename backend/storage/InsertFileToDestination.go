@@ -56,37 +56,37 @@ func addToLocation(file multipart.File, filepath string) error{
 
 
 // add the file to the certain location
-func (f *StoreFile) AddDataToDestination(file multipart.File, fileName string) (string, int, error){
-	folderExistence, err := pathExistence(f.BasePath)
-	fmt.Println("Folder existence: ", folderExistence)
+func (f *StoreFile) AddRawFileToDestination(file multipart.File, fileName, userId string) (string, int, error){
+	newBasePath := filepath.Join(f.BasePath,userId,"uploaded")
+	folderExistence, err := pathExistence(newBasePath)
 	if err == os.ErrNotExist || folderExistence == false{
 		// create the folder
-		err := os.MkdirAll(f.BasePath, 0755)
+		err := os.MkdirAll(newBasePath, 0755)
 		if err != nil{
 			fmt.Println("Error in creating the folder in destination of .", f.BasePath + fileName)
 			return "", http.StatusInternalServerError, errors.New("Error in creating file destination")
 		}
-
 		fmt.Println("Created Successfully.")
 	}
 
 
 	fmt.Println("File name is: ", fileName)
-	err = addToLocation(file, filepath.Join(f.BasePath, fileName))
+	err = addToLocation(file, filepath.Join(newBasePath, fileName))
 	if err != nil {
 		return "", http.StatusInternalServerError, errors.New("Error in creating the file.")
 	}
-	return filepath.Join(f.BasePath, fileName), http.StatusAccepted, nil
+	return filepath.Join(newBasePath, fileName), http.StatusAccepted, nil
 }
 
 // Generate image from the raw file
-func (f *StoreFile) GenerateImage(exactFilePath string) (string,int, error){
+func (f *StoreFile) GenerateImage(exactFilePath string, userId string) (engine.AllFiles,int, error){
 	//generate image from the raw file
-	allImageFiles, baseOutputPath, err := engine.GenerateImageFromRaw(exactFilePath, "./outputImages")
+	filePathToSave := filepath.Join(f.BasePath, userId, "generated")
+	allImageFiles, _, err := engine.GenerateImageFromRaw(exactFilePath, filePathToSave)
 	
 	if err != nil{
 		fmt.Println("Internal Server error: ",err)
-		return  "", -1, err
+		return  engine.AllFiles{}, -1, err
 	}
 	fmt.Println()
 	fmt.Println()
@@ -98,5 +98,5 @@ func (f *StoreFile) GenerateImage(exactFilePath string) (string,int, error){
 	fmt.Println()
 	fmt.Println()
 	fmt.Println()
-	return baseOutputPath, http.StatusAccepted, nil
+	return allImageFiles, http.StatusAccepted, nil
 }

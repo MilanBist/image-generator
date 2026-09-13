@@ -7,18 +7,25 @@ import (
 	"net/http"
 	"path/filepath"
 	"strconv"
+	"github.com/image-generator/engine"
 	"github.com/image-generator/internal/models"
 )
 
 // must satisty this pattern to handle the image
 type ImageGeneration interface{
-	AddDataToDestination(file multipart.File, fileName string) (string,int, error)
-	GenerateImage(exactFilePath string) (string,int, error)
+	AddRawFileToDestination(file multipart.File, fileName, userId string) (string,int, error)
+	GenerateImage(exactFilePath string, userId string) (engine.AllFiles,int, error)
+}
+
+// store the image's metadata to the database as well
+type ImageDimensiongetter interface{
+	GetImageDimension(file multipart.File) (int, int, error)
 }
 
 // what functionality is my this handler is going to have
 type ImageGeneratorHandler struct{
 	Savator		ImageGeneration
+	Dimension 	ImageDimensiongetter
 }
 
 // Handle for the raw data part
@@ -38,7 +45,6 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 	// get the user_id as well from the context
 	data := r.Context().Value("metaData")
 	metaData := data.(models.ContextMetaData)
-	filename  = "user"+strconv.Itoa(metaData.UserId) +"_"+ filename
 
 	// check for the file extension
 	if filepath.Ext(filename) != ".raw"{
@@ -48,8 +54,13 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 	}
 
 
+	fmt.Println("Meta data is; ", metaData)
+
+	// get the dimension of the file 
+
+
 	// add the file data to the given location
-	exactFilePath, statusCode, err := srv.Savator.AddDataToDestination(file, filename)	
+	exactFilePathForRawFile, statusCode, err := srv.Savator.AddRawFileToDestination(file, filename, strconv.Itoa(metaData.UserId))	
 	if err != nil{
 		response := models.Response{
 			Success: false,
@@ -61,8 +72,11 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 		return
 	}
 
+	size := header.Size
+	width, height, err := srv.Dimension.GetImageDimension()
+
 	// now send the fileLocation to the generate image function
-	_,statusCode, err = srv.Savator.GenerateImage(exactFilePath)
+	allGeneratedImageFiles,statusCode, err := srv.Savator.GenerateImage(exactFilePathForRawFile, strconv.Itoa(metaData.UserId))
 	if err != nil{
 		response := models.Response{
 			Success: false,
@@ -73,5 +87,7 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 		json.NewEncoder(w).Encode(response)
 		return	
 	}
+
+	fmt.Println(allGeneratedImageFiles)
 	
 }

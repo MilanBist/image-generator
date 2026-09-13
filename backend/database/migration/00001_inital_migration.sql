@@ -13,7 +13,7 @@ CREATE TABLE "uploadedFiles" (
   "userId" BIGINT NOT NULL,
   "fileName" VARCHAR(255) NOT NULL,
   "storageKey" TEXT NOT NULL,
-  "fileType" VARCHAR(50) NOT NULL,
+  "fileType" VARCHAR(50) NOT NULL DEFAULT ".raw",
   "mimeType" VARCHAR(100) NOT NULL,
   "fileSize" BIGINT,
   "width" INTEGER,

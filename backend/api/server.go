@@ -39,7 +39,7 @@ func(srv *Server) setupRoutes(){
 	}
 
 	imageGenerationService := &storage.StoreFile{
-		BasePath: filepath.Join(".", "uploadFiles"),
+		BasePath: filepath.Join(".", "images", "users", "id"),
 	}
 
 	l := &LoginHandler{
