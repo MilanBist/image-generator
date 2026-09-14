@@ -36,10 +36,11 @@ func(p *PostgresData) AddGeneratedFiles(generatedFilesMetaData models.GeneratedI
 	var id int64
 	err := p.Db.QueryRow(
 		context.Background(),
-		`INSERT INTO "images" ("userId", "sourceFileld", "storageKey", "fileName", "mimeType", "width", "height", "fileSize") 
-		VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"`,
+		`INSERT INTO "images" ("userId", "sourceFileId", "storageKey", "fileName", "mimeType", "width", "height", "fileSize") 
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id"`,
 		generatedFilesMetaData.Userid,
 		generatedFilesMetaData.SourceFieldId,
+		generatedFilesMetaData.StorageKey,
 		generatedFilesMetaData.Filename,
 		generatedFilesMetaData.Mimetype,
 		generatedFilesMetaData.Width,

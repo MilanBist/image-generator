@@ -57,7 +57,6 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 		return
 	}
 
-
 	fmt.Println("Meta data is; ", metaData)
 
 	// get the dimension of the file 
@@ -126,8 +125,9 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 	fmt.Println("For the jpg images: ", allGeneratedImageFiles.JpgFiles)
 	fmt.Println("For the png images: ", allGeneratedImageFiles.PngFiles)
 
-	var jpgIds []int64
-	var pngIds []int64
+	var returningImageResponse models.FileBasedImageGenerationReturn
+
+
 	// for each of the jpg files valid ones
 	for _, value := range allGeneratedImageFiles.JpgFiles{
 		height, width, size, err := utils.GetImageDimension(value)
@@ -142,7 +142,7 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 			SourceFieldId: int64(uploadedId),
 			Filename: splittedData[len(splittedData)-1],
 			StorageKey: value,
-			Mimetype: "image/png",
+			Mimetype: "image/jpg",
 			Width: width,
 			Height: height,
 			FileSize: size,
@@ -159,8 +159,14 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 			json.NewEncoder(w).Encode(response)
 			return	
 		}
-		jpgIds = append(jpgIds, id)
+		// also fill the id as well
+		credentials.Id = int64(id)
+
+
+		// also add to the generageted image
+		returningImageResponse.GeneratedImage = append(returningImageResponse.GeneratedImage, credentials)
 	}
+
 
 	// for all of the png files being uploaded
 	for _, value := range allGeneratedImageFiles.PngFiles{
@@ -189,16 +195,29 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 			Success: false,
 			Message: err.Error(),
 		}
-
 			w.WriteHeader(500)
 			json.NewEncoder(w).Encode(response)
 			return	
 		}
-		pngIds = append(pngIds, id)
+		credentials.Id = int64(id)
+		returningImageResponse.GeneratedImage = append(returningImageResponse.GeneratedImage, credentials)
+
 	}
 
 
+	// add the data of the actual filename
+	returningImageResponse.ActualFile.Id = int64(uploadedId)
+	returningImageResponse.ActualFile.Name = filename
+
+
 	// final response link the uploaded files and the other files which are generated
-	
+	response := models.Response{
+		Success: true,
+		Message: "Successfully added the images.",
+		Data: returningImageResponse,
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-type", "application/json")
+	json.NewEncoder(w).Encode(&response)
 
 }

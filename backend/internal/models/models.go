@@ -1,5 +1,6 @@
 package models
 
+
 type ContextMetaData struct{
 	UserId 		int
 	Email 		string
@@ -17,12 +18,22 @@ type UploadedFilesMetaData struct{
 }
 
 type GeneratedImageMetaData struct{
-	Userid 		 	int64 
-	SourceFieldId	int64
-	StorageKey		string
-	Filename		string
-	Mimetype		string
-	Width			int
-	Height			int
-	FileSize		int64
+	Id				any     `json:"id,omitempty"`
+	Userid 		 	int64 	`json:"userId"`
+	SourceFieldId	int64	`json:"sourceFileId"`
+	StorageKey		string	`json:"storageKey"`
+	Filename		string	`json:"filename"`
+	Mimetype		string	`json:"mimetype"`
+	Width			int		`json:"width"`
+	Height			int		`json:"height"`
+	FileSize		int64	`json:"filesize"`
+}
+type actualFile struct{
+	Name		string 		`json:"name"`
+	Id			int64  		`json:"id"` 			
+}
+type FileBasedImageGenerationReturn struct{
+	ActualFile		actualFile				`json:"inputFile"`
+	GeneratedImage	[]GeneratedImageMetaData 	`json:"images"`
+	
 }
