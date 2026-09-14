@@ -7,8 +7,11 @@ import (
 	"net/http"
 	"path/filepath"
 	"strconv"
+	"strings"
+
 	"github.com/image-generator/engine"
 	"github.com/image-generator/internal/models"
+	"github.com/image-generator/utils"
 )
 
 // must satisty this pattern to handle the image
@@ -17,15 +20,16 @@ type ImageGeneration interface{
 	GenerateImage(exactFilePath string, userId string) (engine.AllFiles,int, error)
 }
 
-// store the image's metadata to the database as well
-type ImageDimensiongetter interface{
-	GetImageDimension(file multipart.File) (int, int, error)
+// store the uploaded and generated files metadata in the database
+type UploadGenerationStore interface{
+	AddUploadedFiles(uploadedMetaData models.UploadedFilesMetaData) (int, error)
+	AddGeneratedFiles(generatedFilesMetaData models.GeneratedImageMetaData) (int64, error)
 }
 
-// what functionality is my this handler is going to have
+// what functionalities this handler is going to contain
 type ImageGeneratorHandler struct{
 	Savator		ImageGeneration
-	Dimension 	ImageDimensiongetter
+	Store 		UploadGenerationStore
 }
 
 // Handle for the raw data part
@@ -72,10 +76,36 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 		return
 	}
 
+	// add these data to uploadedFIles and return back the id of the uploaded fles
 	size := header.Size
-	width, height, err := srv.Dimension.GetImageDimension()
+	mimeType := "application/octet-stream"
+	fmt.Println("The size, height and the width of the file are: ", size)
+	fmt.Println("Mimetype is: ", mimeType)
+	fmt.Println("Filename is: ",filename)
+	fmt.Println("Storage key: ", exactFilePathForRawFile)
 
-	// now send the fileLocation to the generate image function
+	var uploadingMetaData models.UploadedFilesMetaData = models.UploadedFilesMetaData{
+		UserId: int64(metaData.UserId),
+		Filename: filename,
+		StorageKey: exactFilePathForRawFile,
+		FileType: ".raw",
+		Mimetype: mimeType,
+		FileSize: size,
+	}
+
+	uploadedId, err := srv.Store.AddUploadedFiles(uploadingMetaData)
+	if err != nil{
+		response := models.Response{
+			Success: false,
+			Message: err.Error(),
+		}
+
+		w.WriteHeader(500)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	
 	allGeneratedImageFiles,statusCode, err := srv.Savator.GenerateImage(exactFilePathForRawFile, strconv.Itoa(metaData.UserId))
 	if err != nil{
 		response := models.Response{
@@ -88,6 +118,87 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 		return	
 	}
 
-	fmt.Println(allGeneratedImageFiles)
+	fmt.Println()
+	fmt.Println()
+	fmt.Println()
+	fmt.Println()
+
+	fmt.Println("For the jpg images: ", allGeneratedImageFiles.JpgFiles)
+	fmt.Println("For the png images: ", allGeneratedImageFiles.PngFiles)
+
+	var jpgIds []int64
+	var pngIds []int64
+	// for each of the jpg files valid ones
+	for _, value := range allGeneratedImageFiles.JpgFiles{
+		height, width, size, err := utils.GetImageDimension(value)
+		if err != nil{
+			if err.Error()=="invalid"{
+				continue
+			}		}
+		splittedData := strings.Split(value, "/")
+
+		credentials := models.GeneratedImageMetaData{
+			Userid: int64(metaData.UserId),
+			SourceFieldId: int64(uploadedId),
+			Filename: splittedData[len(splittedData)-1],
+			StorageKey: value,
+			Mimetype: "image/png",
+			Width: width,
+			Height: height,
+			FileSize: size,
+		}
+
+		id, err := srv.Store.AddGeneratedFiles(credentials)
+		if err != nil{
+			response := models.Response{
+			Success: false,
+			Message: err.Error(),
+		}
+
+			w.WriteHeader(500)
+			json.NewEncoder(w).Encode(response)
+			return	
+		}
+		jpgIds = append(jpgIds, id)
+	}
+
+	// for all of the png files being uploaded
+	for _, value := range allGeneratedImageFiles.PngFiles{
+		height, width, size, err := utils.GetImageDimension(value)
+		if err != nil{
+			if err.Error()=="invalid"{
+				continue
+			}		
+		}
+		splittedData := strings.Split(value, "/")
+
+		credentials := models.GeneratedImageMetaData{
+			Userid: int64(metaData.UserId),
+			SourceFieldId: int64(uploadedId),
+			Filename: splittedData[len(splittedData)-1],
+			StorageKey: value,
+			Mimetype: "image/png",
+			Width: width,
+			Height: height,
+			FileSize: size,
+		}
+
+		id, err := srv.Store.AddGeneratedFiles(credentials)
+		if err != nil{
+			response := models.Response{
+			Success: false,
+			Message: err.Error(),
+		}
+
+			w.WriteHeader(500)
+			json.NewEncoder(w).Encode(response)
+			return	
+		}
+		pngIds = append(pngIds, id)
+	}
+
+
+	// final response link the uploaded files and the other files which are generated
 	
+
 }

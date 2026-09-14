@@ -16,10 +16,9 @@ CREATE TABLE "uploadedFiles" (
   "fileType" VARCHAR(50) NOT NULL DEFAULT ".raw",
   "mimeType" VARCHAR(100) NOT NULL,
   "fileSize" BIGINT,
-  "width" INTEGER,
-  "height" INTEGER,
+  "width" INTEGER DEFAULT -1,
+  "height" INTEGER DEFAULT -1,
   "createdAt" TIMESTAMP NOT NULL DEFAULT NOW(),
-
   FOREIGN KEY ("userId")
     REFERENCES "users" ("id")
     DEFERRABLE INITIALLY IMMEDIATE

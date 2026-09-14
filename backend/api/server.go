@@ -42,6 +42,9 @@ func(srv *Server) setupRoutes(){
 		BasePath: filepath.Join(".", "images", "users", "id"),
 	}
 
+
+
+
 	l := &LoginHandler{
 		Store: store,
 		Token: jwtService,
@@ -58,6 +61,7 @@ func(srv *Server) setupRoutes(){
 
 	imgGenerator := &ImageGeneratorHandler{
 		Savator: imageGenerationService,
+		Store: store,
 	}
 
 	srv.Router.Get("/api/health", func(w http.ResponseWriter, r *http.Request) {
