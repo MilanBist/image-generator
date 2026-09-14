@@ -24,3 +24,22 @@ type FakeTokenService struct {
 func (f *FakeTokenService) GenerateTokens(userId int64, email, requirement string) (string, string, error) {
 	return f.RefreshToken, f.AccessToken, f.Err
 }
+
+
+// for the register implementation
+type FakeRegistrationImplementation struct{
+	//store user or other things 
+	Id 	int
+	Exists bool
+	Email string
+	Err error
+}
+
+// based on the token service and the registration service create the functions
+func (f *FakeRegistrationImplementation) CheckPastInitialization(email string) (bool, int){
+	return f.Exists, f.Id
+}
+
+func (f *FakeRegistrationImplementation) RegisterUser(credentials models.Register) (int, error){
+	return f.Id, f.Err
+}

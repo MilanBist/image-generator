@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-
 	"github.com/image-generator/engine"
 	"github.com/image-generator/internal/models"
 	"github.com/image-generator/utils"

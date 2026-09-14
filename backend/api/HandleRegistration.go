@@ -67,7 +67,7 @@ func (rh *RegisterHandler) HandleRegister(w http.ResponseWriter, r *http.Request
 	}
 
 	// provide the user the access-token and refresh-token
-	accessToken,refreshToken, err := rh.Token.GenerateTokens(int64(id), registerData.Email, "both")
+	refreshToken,accessToken, err := rh.Token.GenerateTokens(int64(id), registerData.Email, "both")
 
 
 	if err != nil{
@@ -83,12 +83,9 @@ func (rh *RegisterHandler) HandleRegister(w http.ResponseWriter, r *http.Request
 	}
 
 	// add the users to the database
-
-
-
 	response := models.Response{
 		Success: true,
-		Message: "Successfully logged in.",
+		Message: "Successfully registered in.",
 		Data: tokenResponse{
 			AccessToken: accessToken,
 			RefreshToken: refreshToken,
