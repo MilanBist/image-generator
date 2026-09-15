@@ -10,7 +10,6 @@ import (
 	"strings"
 	"github.com/image-generator/engine"
 	"github.com/image-generator/internal/models"
-	"github.com/image-generator/utils"
 )
 
 // must satisty this pattern to handle the image
@@ -25,10 +24,16 @@ type UploadGenerationStore interface{
 	AddGeneratedFiles(generatedFilesMetaData models.GeneratedImageMetaData) (int64, error)
 }
 
+// image dimesion interface
+type ImageDimensions interface{
+	GetDimension(location string) (int, int, int64, error)
+}
+
 // what functionalities this handler is going to contain
 type ImageGeneratorHandler struct{
 	Savator		ImageGeneration
 	Store 		UploadGenerationStore
+	Dimension 	ImageDimensions
 }
 
 // Handle for the raw data part
@@ -129,7 +134,7 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 
 	// for each of the jpg files valid ones
 	for _, value := range allGeneratedImageFiles.JpgFiles{
-		height, width, size, err := utils.GetImageDimension(value)
+		height, width, size, err := srv.Dimension.GetDimension(value)
 		if err != nil{
 			if err.Error()=="invalid"{
 				continue
@@ -166,10 +171,9 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 		returningImageResponse.GeneratedImage = append(returningImageResponse.GeneratedImage, credentials)
 	}
 
-
 	// for all of the png files being uploaded
 	for _, value := range allGeneratedImageFiles.PngFiles{
-		height, width, size, err := utils.GetImageDimension(value)
+		height, width, size, err := srv.Dimension.GetDimension(value)
 		if err != nil{
 			if err.Error()=="invalid"{
 				continue

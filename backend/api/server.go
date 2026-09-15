@@ -5,11 +5,13 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/image-generator/config"
 	"github.com/image-generator/database"
+	"github.com/image-generator/engine"
 	"github.com/image-generator/internal/middlewares"
 	"github.com/image-generator/storage"
 	"github.com/image-generator/utils"
@@ -42,8 +44,9 @@ func(srv *Server) setupRoutes(){
 		BasePath: filepath.Join(".", "images", "users", "id"),
 	}
 
-
-
+	dimension := &engine.Dimension{
+		FileType: "image",
+	}
 
 	l := &LoginHandler{
 		Store: store,
@@ -62,6 +65,7 @@ func(srv *Server) setupRoutes(){
 	imgGenerator := &ImageGeneratorHandler{
 		Savator: imageGenerationService,
 		Store: store,
+		Dimension: dimension,
 	}
 
 	srv.Router.Get("/api/health", func(w http.ResponseWriter, r *http.Request) {
