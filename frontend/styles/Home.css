@@ -1,0 +1,82 @@
+.navbar {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding: 0 30px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #eeeeee;
+}
+
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-icon {
+    width: 75px;
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.brand-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.brand h2 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 600;
+    color: #222222;
+}
+
+.brand span {
+    display: block;
+    margin-top: 2px;
+    font-size: 15px;
+    color: #888888;
+}
+
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    margin-left: 50px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    font-size: 20px;
+    color: #666666;
+}
+
+.nav-links a:hover {
+    color: #222222;
+}
+
+.nav-links a.active {
+    color: #222222;
+    font-weight: 500;
+}
+
+.auth-links {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 50px;
+}
+.auth-links a{
+    text-decoration: none;
+    font-size: 20px;
+    color: #666666;
+}
+
+.auth-links a:hover {
+    color: #222222;
+}
