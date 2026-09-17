@@ -18,7 +18,6 @@ type refreshToken struct{
 }
 
 
-
 func(tkn Refresh) HandleNewAccessToken(w http.ResponseWriter, r *http.Request){
 	// get a new access token based on certain string
 	var token refreshToken
@@ -46,7 +45,7 @@ func(tkn Refresh) HandleNewAccessToken(w http.ResponseWriter, r *http.Request){
 			Message: "Wrong token.",
 			Data: "Attach correct token as refreshToken: <token_string>",
 		}
-
+				
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(&response)
 		return
