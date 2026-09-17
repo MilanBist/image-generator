@@ -1,0 +1,91 @@
+package utils
+
+import (
+	"errors"
+	"fmt"
+	"strconv"
+	"time"
+	"github.com/golang-jwt/jwt/v5"
+)
+
+type JwtService struct{
+	AccessTokenSecret		string
+	RefreshTokenSecret		string
+}
+
+type Claims struct {
+	Email string `json:"email"`
+	Type  string `json:"type"`
+	jwt.RegisteredClaims
+}
+
+
+func generateClaims(email, typeof string, timing int, userId int64) Claims{
+	claims := Claims{
+		Email: email,
+		Type: typeof,
+		RegisteredClaims: jwt.RegisteredClaims{
+				Subject: strconv.FormatInt(userId, 10),
+				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(timing)*time.Minute)),
+				IssuedAt: jwt.NewNumericDate(time.Now()),
+			},
+	}
+	return claims
+}
+
+func(j *JwtService) GenerateTokens(userId int64, email, requirement string)(string,string,error){
+
+
+	accessSecretKey := []byte(j.AccessTokenSecret)
+	refreshSecretKey := []byte(j.RefreshTokenSecret)
+
+	if string(accessSecretKey) == "" || string(refreshSecretKey) == "" {
+    	return "", "", errors.New("JWT secret keys are not configured")
+	}
+
+
+	// return on the basis of the rquirement.
+	switch requirement{
+	case "access":
+		accessTokenClaims := generateClaims(email, "access", 30, userId)
+		accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessTokenClaims)
+		accessTokenString, err := accessToken.SignedString(accessSecretKey)
+		if err != nil{
+			fmt.Println("[GENERATING TOKENS]: Acutal error: ", err)
+			fmt.Println("[GENERATING TOKENS]: Error in generating the access claims")
+			return "", "", errors.New("Error in generating the claims for access token.")
+		}
+		return "", accessTokenString, nil
+	
+	case "refresh":
+		refreshTokenClaims := generateClaims(email, "refresh", 60*24*7, userId)
+		refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshTokenClaims)
+		refreshTokenString, err := refreshToken.SignedString(refreshSecretKey)
+
+		if err != nil {
+		return "", "", err
+		}
+		return refreshTokenString, "", nil
+
+
+	case "both":
+		accessTokenClaims := generateClaims(email, "access", 30, userId)
+		accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessTokenClaims)
+		accessTokenString, err := accessToken.SignedString(accessSecretKey)
+		if err != nil{
+			fmt.Println("[GENERATING TOKENS]: Acutal error: ", err)
+			fmt.Println("[GENERATING TOKENS]: Error in generating the access claims")
+			return "", "", errors.New("Error in generating the claims for access token.")
+		}
+
+		refreshTokenClaims := generateClaims(email, "refresh", 60*24*7, userId)
+		refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshTokenClaims)
+		refreshTokenString, err := refreshToken.SignedString(refreshSecretKey)
+
+		if err != nil {
+		return "", "", err
+		}
+		return refreshTokenString, accessTokenString, nil
+	}
+	return "","", errors.New("Wrong requirement call.")
+}
