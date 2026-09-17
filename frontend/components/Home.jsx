@@ -1,38 +1,7 @@
 import "../styles/Home.css";
 
 import Navbar from "./homeComponents/Navbar";
-
-
-function RawExtractionCard() {
-  return (
-    <div className="asset-card">
-      <div className="asset-card-header">
-        <div className="asset-icon">☁</div>
-        <span className="file-badge">backend.raw</span>
-      </div>
-
-      <h3>RAW Extraction & Download</h3>
-
-      <p>
-        Fetch processed raw camera buffers and render batches directly
-        from the backend server.
-      </p>
-
-      <button className="primary-button">
-        ↓ &nbsp; Download Images
-      </button>
-
-      <button className="secondary-button">
-        ▧ &nbsp; Or Upload Local RAW (card.raw)
-      </button>
-
-      <div className="card-footer">
-        <span>Triggers backend batch zip</span>
-        <span>Direct sync</span>
-      </div>
-    </div>
-  );
-}
+import RawExtractionCard from "./homeComponents/RawExtraction";
 
 
 function AddImageCard() {
