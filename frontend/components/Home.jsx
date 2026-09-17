@@ -1,43 +1,20 @@
 import "../styles/Home.css";
-
 import Navbar from "./homeComponents/Navbar";
 import RawExtractionCard from "./homeComponents/RawExtraction";
-
-
-function AddImageCard() {
-  return (
-    <div className="asset-card">
-      <div className="asset-card-header">
-        <div className="asset-icon">▧</div>
-        <span className="file-badge">raster</span>
-      </div>
-
-      <h3>Add Image</h3>
-
-      <p>
-        Upload a JPG, PNG, or WebP image for fast style transfer or
-        neural variations.
-      </p>
-
-      <button className="secondary-button image-button">
-        ▧ &nbsp; Choose Image
-      </button>
-
-      <div className="card-footer">
-        <span>Supports JPG, PNG, WEBP</span>
-        <span>Up to 50MB</span>
-      </div>
-    </div>
-  );
-}
+import AddImageCard from "./homeComponents/ImageuploadSection";
+import { useState } from "react";
 
 
 function SourceAssets() {
+    // set the states of the main and subsections here
+    const[main, setMain] = useState(null);
+    const[subMain, setSubMain] = useState(null);
+
+
   return (
     <section className="section">
       <div className="section-heading">
         <h2>Source Assets</h2>
-
         <span>
           STAGE 01 / INPUT
         </span>
@@ -45,7 +22,7 @@ function SourceAssets() {
 
       <div className="asset-grid">
         <RawExtractionCard />
-        <AddImageCard />
+        <AddImageCard main = {main}  subMain = {subMain}  setMain={setMain} setSubMain={setSubMain}/>
       </div>
     </section>
   );

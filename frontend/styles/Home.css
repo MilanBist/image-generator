@@ -222,10 +222,8 @@
 .uploadFile::file-selector-button {
     padding: 7px 12px;
     margin-right: 10px;
-
     border: none;
     border-radius: 6px;
-
     background-color: #2563eb;
     color: white;
 
@@ -244,4 +242,104 @@
         width: 100%;
         padding: 20px;
     }
+}
+
+
+.uploadImage {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fafafa;
+    font-size: 14px;
+}
+
+.uploadImage::file-selector-button {
+    padding: 7px 12px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 6px;
+    background-color: #2563eb;
+    color: white;
+
+    cursor: pointer;
+}
+
+.uploadImage::file-selector-button:hover {
+    background-color: #1d4ed8;
+}
+
+
+/* Upload button */
+.uploadraw-button {
+    width: 100%;
+    padding: 10px;
+
+    border: none;
+    border-radius: 6px;
+
+    background-color: #333;
+    color: white;
+
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.uploadraw-button:hover {
+    background-color: #222;
+}
+
+
+/* Work on the source assets */
+.section {
+  width: 100%;
+  max-width: 1100px;
+  margin: 60px auto;
+  padding: 0 30px;
+}
+
+/* Heading */
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.section-heading span {
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  color: #777;
+}
+
+/* Cards */
+.asset-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+
+  /* Center the cards */
+  justify-content: center;
+}
+
+/* Optional: make cards equal height */
+
+
+/* Responsive */
+@media (max-width: 700px) {
+  .asset-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-heading {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
 }

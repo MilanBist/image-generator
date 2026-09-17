@@ -22,7 +22,7 @@ function RawExtractionCard() {
         <span>Upload valid .raw file to get the response.</span>
       </div>
     </div>
-  );
+  )
 }
 
 export default RawExtractionCard;
