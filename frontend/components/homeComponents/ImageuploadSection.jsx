@@ -1,5 +1,6 @@
 import '../../styles/Home.css'
 import MainSubMainImage from './MainSubMainImage'
+// import PromptSection from './PromptSection'
 
 
 export default function AddImageCard({main, subMain, setMain, setSubMain}){
@@ -25,6 +26,9 @@ export default function AddImageCard({main, subMain, setMain, setSubMain}){
                 <div className="card-footer">
                     <span>Upload valid image file.</span>
                 </div>
+
+
+                {/* <PromptSection/> */}
             </div>
         </>
     )

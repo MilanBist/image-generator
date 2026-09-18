@@ -343,3 +343,182 @@
     gap: 8px;
   }
 }
+.search-container {
+  display: flex;
+    align-items: center;
+    position: relative;
+
+  width: 100%;
+  max-width: 600px;
+  margin: 20px auto;
+
+    padding: 8px 56px 8px 16px;
+
+  background: #ffffff;
+  border: 1px solid #dcdcdc;
+  border-radius: 18px;
+
+  box-sizing: border-box;
+
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Focus effect when textarea is being used */
+.search-container:focus-within {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.08);
+}
+
+
+/* =========================
+   TEXTAREA
+   ========================= */
+
+.searcharea {
+  flex: 1;
+  min-width: 0;
+
+    width: 100%;
+    min-height: 36px;
+  max-height: 140px;
+
+    padding: 6px 0;
+    box-sizing: border-box;
+
+  border: none;
+  outline: none;
+  resize: none;
+
+  background: transparent;
+
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+
+  overflow-y: auto;
+}
+
+/* Placeholder */
+.searcharea::placeholder {
+  color: #999;
+}
+
+
+/* =========================
+   SEARCH BUTTON
+   ========================= */
+.search-container {
+  position: relative;
+
+  display: flex;
+  align-items: flex-end;
+
+  width: 100%;
+  max-width: 600px;
+
+  margin: 20px auto;
+  padding: 8px 55px 8px 16px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+  border: 1px solid #dcdcdc;
+  border-radius: 20px;
+
+  transition: border-color 0.2s ease,
+              box-shadow 0.2s ease;
+}
+
+.search-container:focus-within {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.08);
+}
+
+
+/* TEXTAREA */
+
+.searcharea {
+  width: 100%;
+
+  min-height: 24px;
+  max-height: 140px;
+
+  padding: 8px 0;
+
+  border: none;
+  outline: none;
+  resize: none;
+
+  box-sizing: border-box;
+
+  background: transparent;
+
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+
+  overflow-y: auto;
+}
+
+.searcharea::placeholder {
+  color: #999;
+}
+
+
+/* SEARCH BUTTON */
+
+.search-button {
+  position: absolute;
+
+  right: 10px;
+  bottom: 10px;
+
+  width: 36px;
+  height: 36px;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #007bff;
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.search-button:hover {
+  background: #0069d9;
+
+  transform: scale(1.05);
+}
+
+.search-button:active {
+  transform: scale(0.95);
+}
+
+
+/* SVG */
+
+.search-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.note {
+  margin: 10px auto;
+  padding: 6px 12px;
+  color: #8d1b1b;
+  font-size: 15px;
+  text-align: center;
+}

@@ -1,4 +1,4 @@
-import logo from "../../public/logo.png"
+import logo from "../../src/assets/logo.png"
 
 function Navbar() {
   return (
