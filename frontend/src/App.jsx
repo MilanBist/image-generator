@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom';
 import './App.css'
 
@@ -8,7 +7,8 @@ import Register from '../components/Register';
 import Login from '../components/Login';
 import History from '../components/History'
 import Output from '../components/Output';
-import ContactUs from '../components/ContactUs';
+import UploadedFiles from '../components/UploadedFiles';
+
 
 function App() {
 
@@ -18,7 +18,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="register" element={<Register />} />
       <Route path="/history" element={<History />} />
-      <Route path="/contact" element={<ContactUs />} />
+      <Route path="/uploadedFiles" element={<UploadedFiles />} />
       <Route path="/output" element={<Output />} />
     </Routes>
   )

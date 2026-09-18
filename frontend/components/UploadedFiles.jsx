@@ -1,14 +1,13 @@
 import Navbar from "./homeComponents/Navbar";
 
-function ContactUs(){
+function UploadedFiles(){
     return (
         <>
             <div className="contactUs-page">
                 <Navbar/>
             </div>
-
         </>
     )
 }
 
-export default ContactUs;
+export default UploadedFiles;
