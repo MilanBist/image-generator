@@ -1,6 +1,7 @@
 import logo from "../../src/assets/logo.png"
 import { useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 function Navbar({currentStatus = "Logged Out", color = "red"}) {
   const navigate = useNavigate();
 
@@ -8,6 +9,9 @@ function Navbar({currentStatus = "Logged Out", color = "red"}) {
     color = "green";
   }
 
+  const navigateToLocation = (location)=>{
+    navigate(location);
+  }
 
   return (
     <header className="navbar">
@@ -23,15 +27,15 @@ function Navbar({currentStatus = "Logged Out", color = "red"}) {
       </div>
 
       <nav className="nav-links">
-        <a className="active" href="#studio">Home</a>
-        <a href="#output">Output</a>
-        <a href="#history">History</a>
-        <a href="#settings">Contact us</a>
+        <NavLink to="/">Home</NavLink>
+        <NavLink to="/output">Output</NavLink>
+        <NavLink to="/history">History</NavLink>
+        <NavLink to="/contact">Contact</NavLink>
       </nav>
 
       <nav className="auth-links">
-        <a href="/login" onClick={navigate("/login")}>Login</a>
-        <a href="#Status" style={{color:color}}>{currentStatus}</a>
+        <NavLink to="/login">Login</NavLink>
+        <NavLink to="/status" style={{color:color}}>{currentStatus}</NavLink>
       </nav>
 
     </header>

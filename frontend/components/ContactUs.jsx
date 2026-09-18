@@ -1,9 +1,9 @@
 import Navbar from "./homeComponents/Navbar";
 
-function History(){
+function ContactUs(){
     return (
         <>
-            <div className="history-page">
+            <div className="contactUs-page">
                 <Navbar/>
             </div>
 
@@ -11,4 +11,4 @@ function History(){
     )
 }
 
-export default History;
+export default ContactUs;
