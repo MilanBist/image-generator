@@ -25,7 +25,7 @@ function App() {
           <Home />
         </>
       }
-         />
+          />
 
 
       <Route path="/history" element={
@@ -34,6 +34,8 @@ function App() {
           <History />
         </>
       } />
+
+      
       <Route path="/uploadedFiles" element={
         <>
         <Navbar currentStatus={currentStatus}/>
@@ -41,15 +43,17 @@ function App() {
         </>
       } />
 
+
       <Route path="/output" element={
         <>
           <Navbar currentStatus={currentStatus}/>
           <Output />
         </>
       } />
+
+
       <Route path="/login" element={<Login setCurrentStatus={setCurrentStatus}/>} />
       <Route path="register" element={<Register setCurrentStatus={setCurrentStatus}/>} />
-      
     </Routes>
   )
 }

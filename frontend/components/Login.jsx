@@ -91,7 +91,6 @@ export default function Login({setCurrentStatus}){
             navigate("/");
         }).catch((err) => {
             setError(err);
-            console.log(err.response.status);
             const responseStatus = err.response.status;
             switch (responseStatus){
                 case 400:

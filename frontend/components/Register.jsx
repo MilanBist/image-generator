@@ -1,10 +1,9 @@
 import "../styles/Register.css"
 import { useState } from "react";
 import { data, Link } from 'react-router-dom';
-// import apiClient from '../api/api';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import apiClient from "../utils/Base";
 
 // check the username
 const checkName = (username)=>{
@@ -21,7 +20,6 @@ const checkEmail = (email)=>{
         // use the regex to verify the email
     const re  = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const result = re.test(email);
-
     if (result !== true){
         return false;
     }
@@ -48,12 +46,6 @@ export default function Register({setCurrentStatus}){
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-
-    // for the response
-    const [response, setResponse] = useState({});
-    const [error, setError] = useState("");
-
-
     const UpdateUsername = (evt)=>{
         setUsername(evt.target.value);
     }
@@ -68,8 +60,8 @@ export default function Register({setCurrentStatus}){
     const handleSignupSubmit = (evt)=>{
         evt.preventDefault();
     
-        if (String(firstName).length===0 || String(lastName).length===0
-        || String(address).length === 0 || String(email).length === 0 || String(password).length === 0){
+        if (String(username).length===0
+        ||(email).length === 0 || String(password).length === 0){
             alert("Fill all of credentials.");
             return;
         }
@@ -93,7 +85,6 @@ export default function Register({setCurrentStatus}){
             return;
         }    
 
-        console.log("Validation successfull.");
 
         const formdata = {
             userName: username,
@@ -101,24 +92,33 @@ export default function Register({setCurrentStatus}){
             password: password,
         };
 
-        console.log(formdata)
+        console.log("Form data to send to the register page is: ", formdata);
 
-        // // send this to the frontend using the axios
-        // apiClient.post("/register", formdata).then((resp) =>{
-        //     // if the response status is 202
-        //     setResponse(resp);
-        //     console.log("Register response is: ", resp.data);
-        //     localStorage.setItem("tokenId", resp["data"]["data"]["token"]);
-                // setCurrentStatus("Logged In");
-        //     // navigate to the homepage now
-        //     navigate("/");
-            
-        // }).catch((err) =>{
-        //     console.log(err);
-        //     setError(err);
-        // }).finally(()=>{
-        //     console.log("Successfully register response.");
-        // })
+        // send this to the frontend using the axios
+        apiClient.post("/register", formdata).then((resp) =>{
+            // if the response status is 202
+            console.log("Register response is: ", resp.data);
+            localStorage.setItem("accessToken", resp["data"]["data"]["access"]);
+            localStorage.setItem("refreshToken", resp["data"]["data"]["refresh"])
+            setCurrentStatus("Logged In");
+            navigate("/");
+        }).catch((err) =>{
+            const responseStatus = err.response.status;
+            switch (responseStatus){
+                case 400:
+                    alert("Wrong sending method.");
+                case 401:
+                    alert("Login credentials.");
+                case 404:
+                    alert("User doesn't exist. Please register.");
+                case 409:
+                    alert("User already exist. Please login.")
+                case 500:
+                    alert("Internal Server error.");
+            }
+        }).finally(()=>{
+            console.log("Successfully register response.");
+        })
     }
 
     return(
