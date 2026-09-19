@@ -2,9 +2,8 @@ import axios from "axios";
 import "../styles/Login.css"
 import { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-// import apiClient from "../api/api";
 import { useNavigate } from "react-router-dom";
-
+import apiClient from "../utils/Base";
 
 
 
@@ -89,18 +88,18 @@ export default function Login(){
 
 
     // if both are correct then call the handler for the login
-    // apiClient.post("/login",bodyMap).then((resp)=>{
-    //         setResponse(resp);
-    //         // update the token value from the local storage
-    //         localStorage.setItem("accessToken", resp.data["data"]["accessToken"]);
-    //         localStorage.setItem("refreshToken", resp.data["data"]["refreshToken"])
-    //         navigate("/");
-    //     }).catch((err) => {
-    //         setError(err);
-    //         console.log("Login error: ", err);
-    //     }).finally(()=>{
-    //         console.log("Login credentials checked.");
-    //     })
+    apiClient.post("/login",bodyMap).then((resp)=>{
+            setResponse(resp);
+            // update the token value from the local storage
+            localStorage.setItem("accessToken", resp.data["data"]["accessToken"]);
+            localStorage.setItem("refreshToken", resp.data["data"]["refreshToken"])
+            navigate("/");
+        }).catch((err) => {
+            setError(err);
+            console.log("Login error: ", err);
+        }).finally(()=>{
+            console.log("Login credentials checked.");
+        })
     
     }
        return(
