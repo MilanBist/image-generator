@@ -32,15 +32,11 @@ const checkPassword = (password)=>{
     return true;
 }
 
-export default function Login(){
+export default function Login({setCurrentStatus}){
     const navigate = useNavigate();
     // make the states for all of the given things
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
-    // for the response
-    const [response, setResponse] = useState({});
-    const [error, setError] = useState();
 
     const UpdatePassword = (evt)=>{
         setPassword(evt.target.value);
@@ -79,26 +75,36 @@ export default function Login(){
 
 
     const bodyMap = {
-        userEmail: email,
-        userPassword: password
+        email: email,
+        password: password
     };
 ''
     // to be sent
-    console.log("The bodymap which is going to be sent:",bodyMap);
+    console.log("For the login the body to sent: ", bodyMap)
 
 
     // if both are correct then call the handler for the login
     apiClient.post("/login",bodyMap).then((resp)=>{
-            setResponse(resp);
-            // update the token value from the local storage
-            localStorage.setItem("accessToken", resp.data["data"]["accessToken"]);
-            localStorage.setItem("refreshToken", resp.data["data"]["refreshToken"])
+            localStorage.setItem("accessToken", resp.data["data"]["access"]);
+            localStorage.setItem("refreshToken", resp.data["data"]["refresh"]);
+            setCurrentStatus("Logged In");
             navigate("/");
         }).catch((err) => {
             setError(err);
-            console.log("Login error: ", err);
+            console.log(err.response.status);
+            const responseStatus = err.response.status;
+            switch (responseStatus){
+                case 400:
+                    alert("Wrong sending method.");
+                case 401:
+                    alert("Login credentials.");
+                case 404:
+                    alert("User doesn't exist. Please register.");
+                case 500:
+                    alert("Internal Server error.");
+            }
         }).finally(()=>{
-            console.log("Login credentials checked.");
+            console.log("Finished login response to backend.");
         })
     
     }

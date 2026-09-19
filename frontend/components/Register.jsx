@@ -40,7 +40,7 @@ const checkPassword = (password)=>{
     return true;
 }
 
-export default function Register(){
+export default function Register({setCurrentStatus}){
     const navigate = useNavigate();
 
     // make the states for all of the given things
@@ -109,6 +109,7 @@ export default function Register(){
         //     setResponse(resp);
         //     console.log("Register response is: ", resp.data);
         //     localStorage.setItem("tokenId", resp["data"]["data"]["token"]);
+                // setCurrentStatus("Logged In");
         //     // navigate to the homepage now
         //     navigate("/");
             

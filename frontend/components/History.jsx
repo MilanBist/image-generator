@@ -4,7 +4,6 @@ function History(){
     return (
         <>
             <div className="history-page">
-                <Navbar/>
             </div>
 
         </>

@@ -31,7 +31,6 @@ function SourceAssets() {
 export default function Home() {
   return (
     <main className="home-page">
-      <Navbar />
       <SourceAssets />
       <p className="note">Use the prompt bar when you upload the image file only.(Optional)</p>
       <PromptSection/>

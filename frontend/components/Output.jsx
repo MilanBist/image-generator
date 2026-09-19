@@ -4,7 +4,6 @@ function Output(){
     return (
         <>
             <div className="output-page">
-                <Navbar/>
             </div>
 
         </>

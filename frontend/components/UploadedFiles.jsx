@@ -4,7 +4,6 @@ function UploadedFiles(){
     return (
         <>
             <div className="contactUs-page">
-                <Navbar/>
             </div>
         </>
     )
