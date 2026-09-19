@@ -40,30 +40,30 @@ type ImageGeneratorHandler struct{
 func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r *http.Request){
 	// get the image 
 	file,header, err := r.FormFile("file")
-
 	if err != nil {
 		fmt.Println(err)
         http.Error(w, "failed to get file", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Input file missing.",
+		})
         return
     }
 
 	filename := header.Filename
-
-	// get the userId and create the full fileName
-	// get the user_id as well from the context
 	data := r.Context().Value("metaData")
 	metaData := data.(models.ContextMetaData)
-
 	// check for the file extension
 	if filepath.Ext(filename) != ".raw"{
 		fmt.Println("Wrong file name. Should be .raw file.")
-		http.Error(w, "Wrong file input should be .raw insted.", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Input .raw file.",
+		})
 		return
 	}
 
 	fmt.Println("Meta data is; ", metaData)
-
-	// get the dimension of the file 
 
 
 	// add the file data to the given location
@@ -113,7 +113,7 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 	if err != nil{
 		response := models.Response{
 			Success: false,
-			Message: err.Error(),
+			Message: "Internal server error",
 		}
 
 		w.WriteHeader(500)

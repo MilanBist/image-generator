@@ -80,8 +80,7 @@ func(srv *Server) setupRoutes(){
 		// setup for the login and the registration
 		r.Post("/register", rh.HandleRegister)
 		r.Post("/login", l.HandleLogin)
-		r.Get("/refreshToken", tknService.HandleNewAccessToken)
-
+		r.Post("/refreshToken", tknService.HandleNewAccessToken)
 
 		// create the protected handlers
 		r.Group(func(r chi.Router) {

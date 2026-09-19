@@ -30,7 +30,7 @@ function Navbar({currentStatus = "Logged Out", color = "red"}) {
 
       <nav className="auth-links">
         <NavLink to="/login">Login</NavLink>
-        <NavLink to="/status" style={{color:color}}>{currentStatus}</NavLink>
+        <p to="/status" style={{color:color}}>{currentStatus}</p>
       </nav>
 
     </header>
