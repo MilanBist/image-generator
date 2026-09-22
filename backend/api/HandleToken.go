@@ -28,7 +28,7 @@ func(tkn Refresh) HandleNewAccessToken(w http.ResponseWriter, r *http.Request){
 	if token.RefreshToken == ""{
 		response := models.Response{
 			Success: false,
-			Message: "Can't get the token.",
+			Message: "expired",
 			Data: "Attach refreshToken as refreshToken: tokenstring",
 		}
 
@@ -45,7 +45,6 @@ func(tkn Refresh) HandleNewAccessToken(w http.ResponseWriter, r *http.Request){
 			Message: "Wrong token.",
 			Data: "Attach correct token as refreshToken: <token_string>",
 		}
-				
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(&response)
 		return

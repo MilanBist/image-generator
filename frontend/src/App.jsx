@@ -10,12 +10,23 @@ import Output from '../components/Output';
 import UploadedFiles from '../components/UploadedFiles';
 
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 
-function App() {
+function App() {  
+  const[currentStatus, setCurrentStatus] = useState("Logged Out");
+  
 
-  const[currentStatus, setCurrentStatus] = useState("Logged Out")
+  // if there is accesstoken and refresh token the user is normally logged in
+
+  let refreshToken = localStorage.getItem("refreshToken");
+  useEffect(()=>{
+    if (refreshToken !== null){
+      setCurrentStatus("Logged In");
+    }
+  }, []);
+
+  console.log("Current status is: ", currentStatus);
 
   return (
     <Routes>

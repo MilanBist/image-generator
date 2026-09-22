@@ -1,12 +1,14 @@
 import logo from "../../src/assets/logo.png"
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
-function Navbar({currentStatus = "Logged Out", color = "red"}) {
+function Navbar({currentStatus, color = "red"}) {
   const navigate = useNavigate();
 
   if (currentStatus === "Logged In"){
     color = "green";
   }
+
+  console.log("From nav bar",currentStatus);
 
   return (
     <header className="navbar">

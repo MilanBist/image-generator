@@ -21,7 +21,10 @@ function RawExtractionCard() {
       console.log("The token body is: ", tokenBody);
       try{
         const resp = await apiClient.post("/refreshToken", tokenBody);
-        console.log("Responsed data is: ", resp.data);
+        let responseData = resp.data["message"];
+        if(responseData ==="expired"){
+          return ["expired", -2];
+        }
         let accessToken = resp.data["data"]["accessToken"];
         console.log("The new access token is: ", accessToken);
         return [accessToken, 200];
@@ -70,39 +73,56 @@ function RawExtractionCard() {
       });
     };
     
+  try{
+    const accessToken = localStorage.getItem("accessToken");
+    let resp;
     try{
-      const accessToken = localStorage.getItem("accessToken");
-      let resp;
-      try{
-        resp = await sendRequest(accessToken);
-        console.log("Initial response is: ", resp);
-      } catch(err){
-        const status = err.response.status;
-        console.log(status);
-        if (status !== 401){
-          // send the throw
-          throw err;
-        }
+      resp = await sendRequest(accessToken);
+      console.log("Initial response is: ", resp);
+    } catch(err){
+      const status = err.response.status;
+      console.log(status);
+      if (status !== 401){
+        // send the throw
+        throw err;
+      }
 
-        const refreshToken = localStorage.getItem("refreshToken");
-        console.log("Token is expired so getting a new token. ")
-        const [token, code] = await getNewAccessToken(refreshToken);
-        console.log("The responded data is: ", token);
-        console.log("The responded status is: ",code);
-        if (code !== 200){
-          console.log("Error in gettting the error. Please login.");
-          setTimeout(() => {
-            navigate("/login");
-          }, 3000);
+      const refreshToken = localStorage.getItem("refreshToken");
+      if (refreshToken == null){
+        // redirect to the login page after 2 sec
+        alert("You are not logged in: \n Please login.");
+        alert("Redirecting you to login page.");
+        setTimeout(()=>{
+          navigate("/login")
+        }, 1000);
         return;
-        }
-        localStorage.setItem("accessToken", token);
-        // now send the new request again
-        resp = await sendRequest(token);
-        }
-        console.log("Responded data is: ", resp);
-      }catch(err){
-        console.log("Request failed.", err);
+      }
+      // as if the refresh token is expired new login is required.
+      const [token, code] = await getNewAccessToken(refreshToken);
+      if (token === "expired"){
+        alert("Please login again. \n Redirecting to the login page.")
+        setTimeout(()=>{
+          navigate("/login");
+        },1000);
+
+        return;
+      }
+
+      if (code !== 200){
+        console.log("Error in gettting the error. Please login.");
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
+      return;
+      }
+
+
+      localStorage.setItem("accessToken", token);
+      resp = await sendRequest(token);
+      }
+      console.log("Responded data is: ", resp);
+    }catch(err){
+      console.log("Request failed.", err);
     } finally{
       console.log("Finished sending requests.");
     }
