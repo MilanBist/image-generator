@@ -18,7 +18,6 @@ function App() {
   
 
   // if there is accesstoken and refresh token the user is normally logged in
-
   let refreshToken = localStorage.getItem("refreshToken");
   useEffect(()=>{
     if (refreshToken !== null){
