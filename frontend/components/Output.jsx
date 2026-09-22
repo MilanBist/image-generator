@@ -1,11 +1,28 @@
-import Navbar from "./homeComponents/Navbar";
+import ImageCard from "./imageComponents/ImageContainer";
+import "../styles/Output.css"
 
-function Output(){
+function Output({output}){
+    // const images = output["images"];
+    // const uploadedFile = output["inputFile"];
+    console.log("The ouptut part is: ", output);
+
     return (
         <>
-            <div className="output-page">
-            </div>
+            {output.map((data) => (
+            <div className="input-file-section" key={data.inputFile.id}>
 
+            <h2>{data.inputFile.name}</h2>
+
+            <div className="image-grid">
+                {data.images.map((image) => (
+                    <ImageCard
+                        key={image.id}
+                        image={image}
+                    />
+                ))}
+            </div>
+        </div>
+    ))}
         </>
     )
 }

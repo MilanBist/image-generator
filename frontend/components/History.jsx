@@ -1,4 +1,3 @@
-import Navbar from "./homeComponents/Navbar";
 
 function History(){
     return (

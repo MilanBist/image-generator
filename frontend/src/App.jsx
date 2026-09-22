@@ -15,6 +15,9 @@ import { useEffect, useState } from 'react';
 
 function App() {  
   const[currentStatus, setCurrentStatus] = useState("Logged Out");
+  const[output, setOuptut] = useState([]);
+  const[history, setHistory] = useState([]);
+  const[uploaded, setUploaded] = useState([]);
   
 
   // if there is accesstoken and refresh token the user is normally logged in
@@ -32,7 +35,7 @@ function App() {
       <Route path="/" element={
         <>
           <Navbar currentStatus={currentStatus}/>
-          <Home />
+          <Home setOutputSection={setOuptut} setHistorySection={setHistory} setUploadedSection={setUploaded}/>
         </>
       }
           />
@@ -40,7 +43,7 @@ function App() {
 
       <Route path="/history" element={
         <>
-          <Navbar currentStatus={currentStatus}/>
+          <Navbar currentStatus={currentStatus} />
           <History />
         </>
       } />

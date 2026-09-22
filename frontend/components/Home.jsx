@@ -6,7 +6,7 @@ import PromptSection from "./homeComponents/PromptSection";
 import { useState } from "react";
 
 
-function SourceAssets() {
+function SourceAssets({setOutputSection, setHistorySection, setUploadedSection}) {
     // set the states of the main and subsections here
     const[main, setMain] = useState(null);
     const[subMain, setSubMain] = useState(null);
@@ -21,19 +21,19 @@ function SourceAssets() {
         </span>
       </div>
       <div className="asset-grid">
-        <RawExtractionCard />
+        <RawExtractionCard setOutputSection={setOutputSection} setHistorySection={setHistorySection} setUploadedSection={setUploadedSection}/>
         <AddImageCard main = {main}  subMain = {subMain}  setMain={setMain} setSubMain={setSubMain}/>
       </div>
     </section>
   );
 }
 
-export default function Home() {
+export default function Home({setOutputSection, setHistorySection, setUploadedSection}) {
   return (
     <main className="home-page">
-      <SourceAssets />
+      <SourceAssets setOutputSection={setOutputSection} setHistorySection={setHistorySection} setUploadedSection={setUploadedSection}/>
       <p className="note">Use the prompt bar when you upload the image file only.(Optional)</p>
-      <PromptSection/>
+      <PromptSection />
     </main>
   );
 }

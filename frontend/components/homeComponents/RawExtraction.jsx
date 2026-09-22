@@ -3,7 +3,9 @@ import "../../styles/Home.css"
 import apiClient from "../../utils/Base";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-function RawExtractionCard() {
+
+
+function RawExtractionCard({setOutputSection, setHistorySection, setUploadedSection}) {
   const [file, setFile] = useState(null);
   const navigate = useNavigate();
 
@@ -121,6 +123,13 @@ function RawExtractionCard() {
       resp = await sendRequest(token);
       }
       console.log("Responded data is: ", resp);
+      // set the responded data in all of the parameters
+      setOutputSection(prev =>[
+        ...prev,
+        resp.data.data
+      ]);
+      setHistorySection(resp.data["data"]);
+      setUploadedSection(resp.data["data"]["inputFile"]);
     }catch(err){
       console.log("Request failed.", err);
     } finally{
