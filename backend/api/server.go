@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -48,6 +47,12 @@ func(srv *Server) setupRoutes(){
 		FileType: "image",
 	}
 
+	singleimage := &engine.SingleImage{
+		FileTypeRequired: "byted-image",
+	}
+
+
+
 	l := &LoginHandler{
 		Store: store,
 		Token: jwtService,
@@ -67,6 +72,12 @@ func(srv *Server) setupRoutes(){
 		Store: store,
 		Dimension: dimension,
 	}
+
+	singleImageSrv := &SingleImageProperty{
+		Transfer: singleimage,
+		Store: store,
+	}
+
 
 	srv.Router.Get("/api/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Success in getting response."))
@@ -90,6 +101,9 @@ func(srv *Server) setupRoutes(){
 			
 			// after making these handlers protected now use certain things here
 			r.Post("/getImages", imgGenerator.HandleImageGeneration)
+
+			// send the single image files based on the metadata of the image provided by the user
+			r.Get("/getSingleImage", singleImageSrv.HandleSingleImageProperty)
 
 		})
 	})

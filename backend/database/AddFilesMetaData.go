@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"fmt"
-
 	"github.com/image-generator/internal/models"
 )
 

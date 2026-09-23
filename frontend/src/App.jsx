@@ -47,7 +47,6 @@ function App() {
           <History output={output}/>
         </>
       } />
-
       
       <Route path="/uploadedFiles" element={
         <>
@@ -60,7 +59,7 @@ function App() {
       <Route path="/output" element={
         <>
           <Navbar currentStatus={currentStatus}/>
-          <Output />
+          <Output output={output}/>
         </>
       } />
 

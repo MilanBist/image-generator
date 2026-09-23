@@ -122,14 +122,14 @@ function RawExtractionCard({setOutputSection, setHistorySection, setUploadedSect
       localStorage.setItem("accessToken", token);
       resp = await sendRequest(token);
       }
-      console.log("Responded data is: ", resp);
+      console.log("Responded data is: ", resp.data["data"]);
       // set the responded data in all of the parameters
       setOutputSection(prev =>[
         ...prev,
-        resp.data.data
+        resp.data["data"]
       ]);
-      setHistorySection(resp.data["data"]);
-      setUploadedSection(resp.data["data"]["inputFile"]);
+      // setHistorySection(resp.data["data"]);
+      // setUploadedSection(resp.data["data"]["inputFile"]);
     }catch(err){
       console.log("Request failed.", err);
     } finally{
