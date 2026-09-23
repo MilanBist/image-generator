@@ -44,7 +44,7 @@ function App() {
       <Route path="/history" element={
         <>
           <Navbar currentStatus={currentStatus} />
-          <History />
+          <History output={output}/>
         </>
       } />
 
