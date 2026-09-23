@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/image-generator/internal/models"
 )
@@ -53,4 +54,26 @@ func(p *PostgresData) AddGeneratedFiles(generatedFilesMetaData models.GeneratedI
 	return id, nil
 }
 	
-	
+func (p *PostgresData) AddToHistoryOfUser(historyData models.History) (error){
+	var id int
+	query := `INSERT INTO "history"("userId", "sourceFileId", "outputImageId", "operationType", "parameters", "status")
+			VALUES($1, $2, $3, $4, $5, $6) RETURNING "id"
+	`
+	err := p.Db.QueryRow(
+		context.Background(),
+		query, 
+		historyData.UserID, 
+		historyData.SourceFileID, 
+		historyData.OutputImageID,
+		historyData.OperationType,
+		historyData.Parameters,
+		historyData.Status,
+	).Scan(&id)
+
+	fmt.Println("The error is: ", err)
+	if err != nil{
+		fmt.Println(err)
+		return errors.New("Error in adding to database.")
+	}
+	return nil
+}

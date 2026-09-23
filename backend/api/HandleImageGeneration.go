@@ -22,6 +22,7 @@ type ImageGeneration interface{
 type UploadGenerationStore interface{
 	AddUploadedFiles(uploadedMetaData models.UploadedFilesMetaData) (int, error)
 	AddGeneratedFiles(generatedFilesMetaData models.GeneratedImageMetaData) (int64, error)
+	AddToHistoryOfUser(historyData models.History)(error)
 }
 
 // image dimesion interface
@@ -96,6 +97,7 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 		FileSize: size,
 	}
 
+
 	uploadedId, err := srv.Store.AddUploadedFiles(uploadingMetaData)
 	if err != nil{
 		response := models.Response{
@@ -165,7 +167,33 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 		}
 		// also fill the id as well
 		credentials.Id = int64(id)
+		
+		historyCredentials := models.History{
+			UserID: int64(metaData.UserId),
+			SourceFileID: int64(uploadedId),
+			OutputImageID: int64(id),
+			OperationType: "rawFile",
+			Parameters: map[string]any{
+				"height":height,
+				"width":width,
+				"size":size,
+			},
+			Status: "Completed",
+		}
 
+		fmt.Println("History creadentials are: ", historyCredentials)
+		// add this to the history
+		err = srv.Store.AddToHistoryOfUser(historyCredentials)
+		fmt.Println(err)
+		if err != nil{
+			response := models.Response{
+			Success: false,
+			Message: err.Error(),
+			}
+			w.WriteHeader(500)
+			json.NewEncoder(w).Encode(response)
+			return
+		}
 
 		// also add to the generageted image
 		returningImageResponse.GeneratedImage = append(returningImageResponse.GeneratedImage, credentials)
@@ -201,6 +229,32 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 			w.WriteHeader(500)
 			json.NewEncoder(w).Encode(response)
 			return	
+		}
+
+		historyCredentials := models.History{
+			UserID: int64(metaData.UserId),
+			SourceFileID: int64(uploadedId),
+			OutputImageID: int64(id),
+			OperationType: "rawFile",
+			Parameters: map[string]any{
+				"height":height,
+				"width":width,
+				"size":size,
+			},
+			Status: "Completed",
+		}
+
+		// add this to the history
+		err = srv.Store.AddToHistoryOfUser(historyCredentials)
+		if err != nil{
+			response := models.Response{
+			Success: false,
+			Message: err.Error(),
+			}
+
+			w.WriteHeader(500)
+			json.NewEncoder(w).Encode(response)
+			return
 		}
 		credentials.Id = int64(id)
 		returningImageResponse.GeneratedImage = append(returningImageResponse.GeneratedImage, credentials)

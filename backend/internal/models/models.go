@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 
 type ContextMetaData struct{
 	UserId 		int
@@ -36,4 +38,18 @@ type FileBasedImageGenerationReturn struct{
 	ActualFile		actualFile				`json:"inputFile"`
 	GeneratedImage	[]GeneratedImageMetaData 	`json:"images"`
 	
+}
+
+
+type History struct {
+	ID            int64          `json:"id"`
+	UserID        int64          `json:"userId"`
+	SourceFileID  int64          `json:"sourceFileId"`
+	OutputImageID int64          `json:"outputImageId"`
+	OperationType string         `json:"operationType"`
+	Prompt        *string        `json:"prompt"`
+	Parameters    map[string]any `json:"parameters"`
+	Status        string         `json:"status"`
+	CreatedAt     time.Time      `json:"createdAt"`
+	CompletedAt   time.Time      `json:"completedAt"`
 }
