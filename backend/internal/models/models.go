@@ -9,14 +9,16 @@ type ContextMetaData struct{
 }
 
 type UploadedFilesMetaData struct{
-	UserId		int64
-	Filename	string
-	StorageKey	string
-	FileType	string
-	Mimetype	string
-	FileSize 	int64
-	Width		int
-	Height		int
+	Id 			int64		`json:"uploadedId"`
+	UserId		int64		`json:"userId,omitempty"`
+	Filename	string		`json:"filename"`
+	StorageKey	string		`json:"storageKey,omitempty"`
+	FileType	string		`json:"fileType"`
+	Mimetype	string		`json:"mimeType"`
+	FileSize 	any		    `json:"filesize"`
+	Width		any			`json:"width"`
+	Height		any			`json:"height"`
+	CreatedAt 	time.Time 	`json:"createdAt,omitempty"`
 }
 
 type GeneratedImageMetaData struct{

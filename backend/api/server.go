@@ -78,6 +78,10 @@ func(srv *Server) setupRoutes(){
 		Store: store,
 	}
 
+	uploadSrv := &UploadedFiles{
+		Files: store,
+	}
+
 
 	srv.Router.Get("/api/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Success in getting response."))
@@ -104,6 +108,9 @@ func(srv *Server) setupRoutes(){
 
 			// send the single image files based on the metadata of the image provided by the user
 			r.Get("/getSingleImage", singleImageSrv.HandleSingleImageProperty)
+
+			// handle for the uploaded file
+			r.Get("/uploadedFiles", uploadSrv.HandleUploadedFiles)
 
 		})
 	})

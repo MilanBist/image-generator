@@ -77,3 +77,51 @@ func (p *PostgresData) AddToHistoryOfUser(historyData models.History) (error){
 	}
 	return nil
 }
+
+func(p *PostgresData) GetAllUploadedFiles(userId int)([]models.UploadedFilesMetaData, error){
+	query := `SELECT "id", "fileName","fileType", "mimeType", "fileSize", "width", "height", "createdAt"
+			FROM "uploadedFiles" WHERE "userId" = $1
+	`
+
+	ctx := context.Background()
+
+	rows, err := p.Db.Query(ctx, query, userId)
+	
+
+	if err != nil{
+		fmt.Println("Error in getting the uploadedFiles: ", err)
+		return []models.UploadedFilesMetaData{}, errors.New("error in getting data")
+	}
+
+	defer rows.Close()
+
+	var uploadedFiles []models.UploadedFilesMetaData
+
+	for rows.Next(){
+		var uploadedModel models.UploadedFilesMetaData
+		err := rows.Scan(&uploadedModel.Id, 
+		&uploadedModel.Filename,
+		&uploadedModel.FileType,
+		&uploadedModel.Mimetype,
+		&uploadedModel.FileSize,
+		&uploadedModel.Width,
+		&uploadedModel.Height,
+		&uploadedModel.CreatedAt)
+
+		if err != nil{
+			fmt.Println(err)
+			fmt.Println("Error in gettting metadata from database.")
+			return []models.UploadedFilesMetaData{}, errors.New("Error in getting the value of rows.")
+		}
+
+
+		uploadedFiles = append(uploadedFiles, uploadedModel)
+	}
+
+
+	return uploadedFiles, nil
+
+
+
+	
+}
