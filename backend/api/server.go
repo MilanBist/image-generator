@@ -82,6 +82,9 @@ func(srv *Server) setupRoutes(){
 		Files: store,
 	}
 
+	historySrv := &History{
+		Data: store,
+	}
 
 	srv.Router.Get("/api/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Success in getting response."))
@@ -111,6 +114,9 @@ func(srv *Server) setupRoutes(){
 
 			// handle for the uploaded file
 			r.Get("/uploadedFiles", uploadSrv.HandleUploadedFiles)
+
+			// handle for the history data
+			r.Get("/history", historySrv.HandleHistory)
 
 		})
 	})

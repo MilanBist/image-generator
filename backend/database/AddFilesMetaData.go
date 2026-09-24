@@ -121,7 +121,8 @@ func(p *PostgresData) GetAllUploadedFiles(userId int)([]models.UploadedFilesMeta
 
 	return uploadedFiles, nil
 
+}
 
-
-	
+func (p *PostgresData) GetHistoryDataOfUser(userId int) (string, error){
+	return "", nil
 }
