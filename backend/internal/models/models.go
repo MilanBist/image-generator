@@ -18,7 +18,7 @@ type UploadedFilesMetaData struct{
 	FileSize 	any		    `json:"filesize"`
 	Width		any			`json:"width"`
 	Height		any			`json:"height"`
-	CreatedAt 	time.Time 	`json:"createdAt,omitempty"`
+	CreatedAt 	time.Time 	`json:"createdAt"`
 }
 
 type GeneratedImageMetaData struct{

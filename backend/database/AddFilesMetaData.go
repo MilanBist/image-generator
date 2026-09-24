@@ -123,6 +123,51 @@ func(p *PostgresData) GetAllUploadedFiles(userId int)([]models.UploadedFilesMeta
 
 }
 
+
+// SELECT
+//     "uploadedFiles"."id",
+//     "uploadedFiles"."fileName",
+//     "uploadedFiles"."createdAt",
+//     "images"."id",
+//     "images"."fileName",
+//     "images"."mimeType"
+// FROM "uploadedFiles"
+// JOIN "images"
+//     ON "images"."sourceFileId" = "uploadedFiles"."id"
+// ORDER BY
+//     "uploadedFiles"."createdAt" DESC,
+//     "images"."id" ASC;
+
 func (p *PostgresData) GetHistoryDataOfUser(userId int) (string, error){
-	return "", nil
+
+	query := `
+		SELECT
+		"uploadedFiles"."id",
+		"uploadedFiles"."fileName",
+		"uploadedFiles"."createdAt",
+		"images"."id",
+		"images"."fileName",
+		"images"."mimeType"
+		FROM "uploadedFiles"
+		JOIN "images"
+			ON "images"."sourceFileId" = "uploadedFiles"."id"
+		WHERE "userId" = $1
+		ORDER BY
+			"uploadedFiles"."createdAt" DESC,
+			"images"."id" ASC;
+	`
+
+	ctx := context.Background()
+
+	rows, err := p.Db.Query(ctx, query, userId)
+	if err != nil{
+		fmt.Println("Error is: ",err)
+		return "", errors.New("Error in generating response.")
+	}
+	defer rows.Close()
+
+	for rows.Next(){
+
+	}
+	return "Success in getting data", nil
 }
