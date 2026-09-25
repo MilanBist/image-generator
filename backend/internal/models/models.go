@@ -39,7 +39,6 @@ type actualFile struct{
 type FileBasedImageGenerationReturn struct{
 	ActualFile		actualFile				`json:"inputFile"`
 	GeneratedImage	[]GeneratedImageMetaData 	`json:"images"`
-	
 }
 
 
@@ -54,4 +53,13 @@ type History struct {
 	Status        string         `json:"status"`
 	CreatedAt     time.Time      `json:"createdAt"`
 	CompletedAt   time.Time      `json:"completedAt"`
+}
+
+type HistoricalData struct{
+	UploadedFileId		int			`json:"uploadedId"`
+	UploadedFileName 	string		`json:"uploadedFileName"`
+	CreatedAt 			time.Time   `json:"createdAt"`
+	ImageId 			int 		`json:"imageid"`
+	ImageName 			string 		`json:"imageName"`
+	MimeType 			string 		`json:"mimeType"`
 }

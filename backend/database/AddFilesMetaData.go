@@ -124,22 +124,7 @@ func(p *PostgresData) GetAllUploadedFiles(userId int)([]models.UploadedFilesMeta
 }
 
 
-// SELECT
-//     "uploadedFiles"."id",
-//     "uploadedFiles"."fileName",
-//     "uploadedFiles"."createdAt",
-//     "images"."id",
-//     "images"."fileName",
-//     "images"."mimeType"
-// FROM "uploadedFiles"
-// JOIN "images"
-//     ON "images"."sourceFileId" = "uploadedFiles"."id"
-// ORDER BY
-//     "uploadedFiles"."createdAt" DESC,
-//     "images"."id" ASC;
-
-func (p *PostgresData) GetHistoryDataOfUser(userId int) (string, error){
-
+func (p *PostgresData) GetHistoryDataOfUser(userId int) ([]models.HistoricalData, error){
 	query := `
 		SELECT
 		"uploadedFiles"."id",
@@ -151,23 +136,42 @@ func (p *PostgresData) GetHistoryDataOfUser(userId int) (string, error){
 		FROM "uploadedFiles"
 		JOIN "images"
 			ON "images"."sourceFileId" = "uploadedFiles"."id"
-		WHERE "userId" = $1
+		WHERE "uploadedFiles"."userId" = $1
 		ORDER BY
 			"uploadedFiles"."createdAt" DESC,
 			"images"."id" ASC;
 	`
 
 	ctx := context.Background()
-
+	var data []models.HistoricalData
+	var counter int
 	rows, err := p.Db.Query(ctx, query, userId)
 	if err != nil{
 		fmt.Println("Error is: ",err)
-		return "", errors.New("Error in generating response.")
+		return nil, errors.New("Error in generating response.")
 	}
 	defer rows.Close()
 
 	for rows.Next(){
-
+		var d models.HistoricalData
+		err := rows.Scan(&d.UploadedFileId,
+		&d.UploadedFileName,
+		&d.CreatedAt,
+		&d.ImageId,
+		&d.ImageName,
+		&d.MimeType,
+	)
+	if err != nil{
+		fmt.Println(err)
+		return nil,err
 	}
-	return "Success in getting data", nil
+
+	fmt.Println(d)
+	fmt.Println("counter: ",counter)
+	counter += 1
+	data = append(data, d)
+	}
+
+	fmt.Println(data)
+	return data, nil
 }

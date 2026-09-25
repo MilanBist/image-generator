@@ -33,8 +33,6 @@ func(u *UploadedFiles) HandleUploadedFiles(w http.ResponseWriter, r *http.Reques
 		json.NewEncoder(w).Encode(&response)
 		return
 	}
-
-
 	// return the data of the uploaded files now
 	response := models.Response{
 		Success: true,
