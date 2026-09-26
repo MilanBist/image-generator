@@ -1,7 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import './App.css'
 import Navbar from '../components/homeComponents/Navbar';
-
 import Home from '../components/Home';
 import Register from '../components/Register';
 import Login from '../components/Login';
@@ -44,7 +43,7 @@ function App() {
       <Route path="/history" element={
         <>
           <Navbar currentStatus={currentStatus} />
-          <History output={output}/>
+          <History output={output} history={history} setHistory={setHistory}/>
         </>
       } />
       

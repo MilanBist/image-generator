@@ -113,6 +113,7 @@ func(h *History) HandleHistory(w http.ResponseWriter, r *http.Request){
 	}
 
 
+
 	response := models.Response{
 		Success: true,
 		Message: "Success in retrieving the historical data.",

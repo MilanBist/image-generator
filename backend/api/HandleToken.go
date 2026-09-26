@@ -42,7 +42,7 @@ func(tkn Refresh) HandleNewAccessToken(w http.ResponseWriter, r *http.Request){
 	if err != nil{
 		response := models.Response{
 			Success: false,
-			Message: "Wrong token.",
+			Message: "expired",
 			Data: "Attach correct token as refreshToken: <token_string>",
 		}
 		w.WriteHeader(http.StatusBadRequest)
