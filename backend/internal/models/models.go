@@ -16,7 +16,6 @@ type UploadedFilesMetaData struct{
 	FileType	string		`json:"fileType"`
 	Mimetype	string		`json:"mimeType"`
 	FileSize 	any		    `json:"filesize"`
-	Width		any			`json:"width"`
 	Height		any			`json:"height"`
 	CreatedAt 	time.Time 	`json:"createdAt"`
 }
@@ -32,13 +31,24 @@ type GeneratedImageMetaData struct{
 	Height			int		`json:"height"`
 	FileSize		int64	`json:"filesize"`
 }
-type actualFile struct{
-	Name		string 		`json:"name"`
-	Id			int64  		`json:"id"` 			
+type BaseFileData struct{
+	Id 			int64		`json:"uploadedId"`
+	Filename	string		`json:"fileName"`
+	FileType	string		`json:"fileType"`
+	CreatedAt 	time.Time 	`json:"createdAt"`
+}
+
+type BaseImageMetaData struct{
+	Id				any     `json:"imageId"`
+	ImageName		string	`json:"imageName"`
+	Mimetype		string	`json:"mimetype"`
+	Width			int		`json:"width"`
+	Height			int		`json:"height"`
+	FileSize		int64	`json:"filesize"`
 }
 type FileBasedImageGenerationReturn struct{
-	ActualFile		actualFile				`json:"inputFile"`
-	GeneratedImage	[]GeneratedImageMetaData 	`json:"images"`
+	ActualFile		BaseFileData				`json:"inputFile"`
+	GeneratedImage	[]BaseImageMetaData		 	`json:"images"`
 }
 
 
@@ -62,4 +72,7 @@ type HistoricalData struct{
 	ImageId 			int 		`json:"imageid"`
 	ImageName 			string 		`json:"imageName"`
 	MimeType 			string 		`json:"mimeType"`
+	Width			int		`json:"width"`
+	Height			int		`json:"height"`
+	FileSize		int64	`json:"filesize"`
 }

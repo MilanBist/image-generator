@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
-
 	"github.com/image-generator/internal/models"
 )
 
@@ -38,28 +36,12 @@ func(h *History) HandleHistory(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	// return history data grouped by 
-	type uploadedFilesMetaData struct{
-		Id 			int64		`json:"uploadedId"`
-		Filename	string		`json:"filename"`
-		CreatedAt 	time.Time 	`json:"createdAt"`
-	}
 
-	type generatedImageMetaData struct{
-		Id				any     `json:"imageId"`
-		ImageName		string	`json:"imageName"`
-		Mimetype		string	`json:"mimeType"`
-	}
 
-	type fileBasedImageGenerationReturn struct{
-		ActualFile		uploadedFilesMetaData		`json:"inputFile"`
-		GeneratedImage	[]generatedImageMetaData 	`json:"images"`
-	}
-
-	var sendingData []fileBasedImageGenerationReturn
-	var data1 fileBasedImageGenerationReturn
-	var upload uploadedFilesMetaData
-	var image []generatedImageMetaData
+	var sendingData []models.FileBasedImageGenerationReturn
+	var data1 models.FileBasedImageGenerationReturn
+	var upload models.BaseFileData
+	var image []models.BaseImageMetaData
 
 	for i, value := range historyData{
 		// for initial data set the actualFile and data1
@@ -70,7 +52,7 @@ func(h *History) HandleHistory(w http.ResponseWriter, r *http.Request){
 			data1.ActualFile = upload
 
 
-			var image1 generatedImageMetaData
+			var image1 models.BaseImageMetaData
 			image1.Id = value.ImageId
 			image1.ImageName = value.ImageName
 			image1.Mimetype = value.MimeType
@@ -78,7 +60,7 @@ func(h *History) HandleHistory(w http.ResponseWriter, r *http.Request){
 		} else{
 			if value.UploadedFileId == int(data1.ActualFile.Id){
 				// add to the generated image section
-				var image1 generatedImageMetaData
+				var image1 models.BaseImageMetaData
 				image1.Id = value.ImageId
 				image1.ImageName = value.ImageName
 				image1.Mimetype = value.MimeType
@@ -90,9 +72,9 @@ func(h *History) HandleHistory(w http.ResponseWriter, r *http.Request){
 				sendingData = append(sendingData, data1)
 
 				// set all to be null and initiate
-				data1 = fileBasedImageGenerationReturn{}
-				upload = uploadedFilesMetaData{}
-				image = []generatedImageMetaData{}
+				data1 = models.FileBasedImageGenerationReturn{}
+				upload = models.BaseFileData{}
+				image = []models.BaseImageMetaData{}
 
 				// set all of the upload again
 				upload.Id = int64(value.UploadedFileId)
@@ -101,14 +83,13 @@ func(h *History) HandleHistory(w http.ResponseWriter, r *http.Request){
 				data1.ActualFile = upload
 
 				//set all of the images inside to be null
-				var image1 generatedImageMetaData
+				var image1 models.BaseImageMetaData
 				image1.Id = value.ImageId
 				image1.ImageName = value.ImageName
 				image1.Mimetype = value.MimeType
 				image = append(image, image1)
 			}
 		}
-
 
 	}
 

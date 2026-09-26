@@ -9,7 +9,7 @@ import (
 )
 
 type UploadedHistory interface{
-	GetAllUploadedFiles(userId int) ([]models.UploadedFilesMetaData, error)
+	GetAllUploadedFiles(userId int) ([]models.BaseFileData, error)
 }
 
 type UploadedFiles struct{

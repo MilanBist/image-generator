@@ -2,8 +2,7 @@ import { useEffect } from "react";
 import apiClient from "../utils/Base";
 import { useNavigate } from "react-router-dom";
 import { getNewAccessToken } from "../utils/NewAccessToken";
-
-
+import ImageCard from "./imageComponents/ImageContainer";
 
 
 function History({output, history, setHistory}){
@@ -76,7 +75,20 @@ function History({output, history, setHistory}){
     return (
         <>
             <div className="history-page">
-                
+                     {history && history.map((data) => (
+                            <div className="input-file-section" key={data.inputFile.uploadedId}>
+                            <h2>{data.inputFile.name}</h2>  
+                            <h3>{data.inputFile.createdAt}</h3>
+                            <div className="image-grid">
+                                {data.images.map((image) => (
+                                    <ImageCard
+                                        key={image.imageId}
+                                        image={image}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    ))}
             </div>
 
         </>

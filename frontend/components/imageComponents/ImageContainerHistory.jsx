@@ -2,7 +2,7 @@ import { useState } from "react";
 import "../../styles/ImageCard.css";
 import apiClient from "../../utils/Base";
 
-export default function ImageCard({ image }) {
+export default function ImageCardHistory({ image }) {
 
     const [preview, setPreview] = useState(null);
 
@@ -75,6 +75,7 @@ export default function ImageCard({ image }) {
     return (
         <>
             <div className="image-card">
+
                 {/* Image */}
                 <div className="image-container">
                     {/* Don't use storageKey here if it is only a backend path */}
@@ -86,6 +87,7 @@ export default function ImageCard({ image }) {
                 {/* Basic information */}
                 <div className="image-details">
                     <h3>{image["filename"]}</h3>
+
                     <div className="metadata">
 
                         <div>

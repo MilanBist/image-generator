@@ -6,15 +6,14 @@ import (
 )
 
 // get the image's storageKey based on the imageId and userId
-func(p *PostgresData) GetImageStorageKey() (string, error){
-	var userId, id int
+func(p *PostgresData) GetImageStorageKey(imageId, userId int) (string, error){
 	var storageKey string
 	query := `SELECT "storageKey" FROM "images" WHERE "userId" = $1 AND "id" = $2`
 	err := p.Db.QueryRow(
 		context.Background(),
 		query,
 		userId,
-		id,
+		imageId,
 	).Scan(&storageKey)
 
 	if err != nil{

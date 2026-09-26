@@ -89,12 +89,9 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 	fmt.Println("Storage key: ", exactFilePathForRawFile)
 
 	var uploadingMetaData models.UploadedFilesMetaData = models.UploadedFilesMetaData{
-		UserId: int64(metaData.UserId),
 		Filename: filename,
-		StorageKey: exactFilePathForRawFile,
 		FileType: ".raw",
-		Mimetype: mimeType,
-		FileSize: size,
+
 	}
 
 
@@ -154,6 +151,15 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 			FileSize: size,
 		}
 
+
+		// prepare the data to send to frontned
+		frontendSendingCredentials := models.BaseImageMetaData{
+			Mimetype: "image/jpg",
+			Width: width,
+			Height: height,
+			FileSize: size,
+		}
+
 		id, err := srv.Store.AddGeneratedFiles(credentials)
 		if err != nil{
 			response := models.Response{
@@ -167,6 +173,7 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 		}
 		// also fill the id as well
 		credentials.Id = int64(id)
+		frontendSendingCredentials.Id = id
 		
 		historyCredentials := models.History{
 			UserID: int64(metaData.UserId),
@@ -196,7 +203,7 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 		}
 
 		// also add to the generageted image
-		returningImageResponse.GeneratedImage = append(returningImageResponse.GeneratedImage, credentials)
+		returningImageResponse.GeneratedImage = append(returningImageResponse.GeneratedImage, frontendSendingCredentials)
 	}
 
 	// for all of the png files being uploaded
@@ -220,16 +227,25 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 			FileSize: size,
 		}
 
+		frontendSendingCredentials := models.BaseImageMetaData{
+			Mimetype: "image/png",
+			Width: width,
+			Height: height,
+			FileSize: size,
+		}
+
 		id, err := srv.Store.AddGeneratedFiles(credentials)
 		if err != nil{
 			response := models.Response{
 			Success: false,
 			Message: err.Error(),
-		}
+			}
 			w.WriteHeader(500)
 			json.NewEncoder(w).Encode(response)
 			return	
 		}
+
+		frontendSendingCredentials.Id = id
 
 		historyCredentials := models.History{
 			UserID: int64(metaData.UserId),
@@ -257,14 +273,14 @@ func(srv *ImageGeneratorHandler) HandleImageGeneration(w http.ResponseWriter, r 
 			return
 		}
 		credentials.Id = int64(id)
-		returningImageResponse.GeneratedImage = append(returningImageResponse.GeneratedImage, credentials)
+		returningImageResponse.GeneratedImage = append(returningImageResponse.GeneratedImage, frontendSendingCredentials)
 
 	}
 
-
 	// add the data of the actual filename
 	returningImageResponse.ActualFile.Id = int64(uploadedId)
-	returningImageResponse.ActualFile.Name = filename
+	returningImageResponse.ActualFile.Filename = filename
+	returningImageResponse.ActualFile.FileType = ".raw"
 
 
 	// final response link the uploaded files and the other files which are generated

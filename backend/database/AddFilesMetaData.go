@@ -78,8 +78,8 @@ func (p *PostgresData) AddToHistoryOfUser(historyData models.History) (error){
 	return nil
 }
 
-func(p *PostgresData) GetAllUploadedFiles(userId int)([]models.UploadedFilesMetaData, error){
-	query := `SELECT "id", "fileName","fileType", "mimeType", "fileSize", "width", "height", "createdAt"
+func(p *PostgresData) GetAllUploadedFiles(userId int)([]models.BaseFileData, error){
+	query := `SELECT "id", "fileName","fileType", "createdAt"
 			FROM "uploadedFiles" WHERE "userId" = $1
 	`
 
@@ -90,28 +90,24 @@ func(p *PostgresData) GetAllUploadedFiles(userId int)([]models.UploadedFilesMeta
 
 	if err != nil{
 		fmt.Println("Error in getting the uploadedFiles: ", err)
-		return []models.UploadedFilesMetaData{}, errors.New("error in getting data")
+		return []models.BaseFileData{}, errors.New("error in getting data")
 	}
 
 	defer rows.Close()
 
-	var uploadedFiles []models.UploadedFilesMetaData
+	var uploadedFiles []models.BaseFileData
 
 	for rows.Next(){
-		var uploadedModel models.UploadedFilesMetaData
+		var uploadedModel models.BaseFileData
 		err := rows.Scan(&uploadedModel.Id, 
 		&uploadedModel.Filename,
 		&uploadedModel.FileType,
-		&uploadedModel.Mimetype,
-		&uploadedModel.FileSize,
-		&uploadedModel.Width,
-		&uploadedModel.Height,
 		&uploadedModel.CreatedAt)
 
 		if err != nil{
 			fmt.Println(err)
 			fmt.Println("Error in gettting metadata from database.")
-			return []models.UploadedFilesMetaData{}, errors.New("Error in getting the value of rows.")
+			return []models.BaseFileData{}, errors.New("Error in getting the value of rows.")
 		}
 
 
@@ -132,7 +128,10 @@ func (p *PostgresData) GetHistoryDataOfUser(userId int) ([]models.HistoricalData
 		"uploadedFiles"."createdAt",
 		"images"."id",
 		"images"."fileName",
-		"images"."mimeType"
+		"images"."mimeType",
+		"images"."height",
+		"images"."width",
+		"images"."fileSize",
 		FROM "uploadedFiles"
 		JOIN "images"
 			ON "images"."sourceFileId" = "uploadedFiles"."id"
@@ -160,6 +159,9 @@ func (p *PostgresData) GetHistoryDataOfUser(userId int) ([]models.HistoricalData
 		&d.ImageId,
 		&d.ImageName,
 		&d.MimeType,
+		&d.Width,
+		&d.Height,
+		&d.FileSize,
 	)
 	if err != nil{
 		fmt.Println(err)
